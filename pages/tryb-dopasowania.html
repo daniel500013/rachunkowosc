@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tryb Dopasowania - Nauka Bilansu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff5f9;
+        }
+        h1, h2, h3 {
+            font-family: 'Pacifico', cursive;
+        }
+        .kawaii-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #ff99cc, #ff80bf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .btn-kawaii {
+            background: linear-gradient(45deg, #ff99cc, #ff66b3);
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(255, 153, 204, 0.3);
+            transition: all 0.3s;
+        }
+        .btn-kawaii:hover {
+            box-shadow: 0 6px 8px rgba(255, 153, 204, 0.4);
+            transform: translateY(-2px);
+        }
+        .drag-item {
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s;
+            background-color: white;
+            border: 2px solid #ffcce6;
+            border-radius: 12px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .drag-item:hover {
+            box-shadow: 0 4px 6px rgba(255, 102, 179, 0.2);
+            transform: translateY(-2px);
+        }
+        .drag-item.dragging {
+            opacity: 0.5;
+            box-shadow: 0 8px 15px rgba(255, 102, 179, 0.3);
+        }
+        .drop-zone {
+            min-height: 150px;
+            border: 2px dashed #ffcce6;
+            border-radius: 12px;
+            background-color: rgba(255, 242, 246, 0.5);
+            transition: all 0.2s;
+            padding: 1rem;
+        }
+        .drop-zone.highlight {
+            background-color: rgba(255, 204, 230, 0.3);
+            border-color: #ff80bf;
+        }
+        .drop-zone-title {
+            color: #ff80bf;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .feedback-correct {
+            background-color: rgba(167, 243, 208, 0.3);
+            border-color: #10B981;
+        }
+        .feedback-incorrect {
+            background-color: rgba(254, 202, 202, 0.3);
+            border-color: #EF4444;
+        }
+        .score-display {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ff66b3;
+            border: 2px solid #ffcce6;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background-color: white;
+            border-radius: 50px;
+            box-shadow: 0 4px 6px rgba(255, 153, 204, 0.2);
+        }
+        @media (max-width: 768px) {
+            .drag-item {
+                margin-bottom: 0.75rem;
+            }
+            .drop-zone {
+                min-height: 120px;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Nagłówek -->
+    <header class="bg-gradient-to-r from-pink-400 to-pink-600 text-white py-8 shadow-lg relative overflow-hidden">
+        <div class="container mx-auto px-4 relative z-10">
+            <h1 class="text-3xl md:text-4xl text-center">✨ Nauka Bilansu ✨</h1>
+            <p class="text-center mt-2 text-white font-light">Tryb dopasowania</p>
+        </div>
+    </header>
+
+    <!-- Nawigacja -->
+    <nav class="bg-white py-4 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap justify-between items-center">
+                <a href="../index.html" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">
+                    <i class="fas fa-home mr-2"></i> Strona główna
+                </a>
+                <div class="flex flex-wrap">
+                    <a href="tryb-wprowadzajacy.html" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">Tryb wprowadzający</a>
+                    <a href="tryb-dopasowania.html" class="text-pink-600 mx-2 font-semibold">Tryb dopasowania</a>
+                    <a href="tryb-quiz.html" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">Tryb quizu</a>
+                    <a href="tryb-finalny.html" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">Tryb praktyczny</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Główna zawartość -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Wprowadzenie -->
+        <section class="mb-12">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
+                <h2 class="text-2xl md:text-3xl text-purple-600 text-center mb-6">Ćwiczenia z dopasowania</h2>
+                <p class="mb-4 text-gray-700">
+                    W tym trybie ćwiczymy przyporządkowanie konkretnych pozycji do właściwych kategorii bilansu. Przeciągnij elementy z prawej kolumny i upuść je w odpowiedniej kategorii po lewej stronie.
+                </p>
+                <p class="mb-4 text-gray-700">
+                    Po umieszczeniu wszystkich elementów, kliknij przycisk "Sprawdź odpowiedzi", aby zobaczyć, które pozycje zostały prawidłowo przyporządkowane.
+                </p>
+                <p class="text-gray-700">
+                    Po wykonaniu jednego ćwiczenia możesz przejść do kolejnego, klikając przycisk "Następne ćwiczenie".
+                </p>
+            </div>
+        </section>
+
+        <!-- Wynik -->
+        <section class="mb-8 text-center">
+            <div class="score-display">
+                Punkty: <span id="score">0</span> / <span id="total-points">0</span>
+            </div>
+        </section>
+
+        <!-- Ćwiczenie -->
+        <section class="mb-12">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
+                <h3 class="text-xl text-purple-600 mb-6" id="exercise-title">Ćwiczenie 1: Podstawowe kategorie bilansu</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Kategorie docelowe -->
+                    <div>
+                        <h4 class="text-lg text-purple-600 mb-4">Kategorie bilansu:</h4>
+                        
+                        <div id="drop-aktywa-trwale" class="drop-zone mb-4" data-category="aktywa-trwale">
+                            <div class="drop-zone-title">Aktywa trwałe</div>
+                        </div>
+                        
+                        <div id="drop-aktywa-obrotowe" class="drop-zone mb-4" data-category="aktywa-obrotowe">
+                            <div class="drop-zone-title">Aktywa obrotowe</div>
+                        </div>
+                        
+                        <div id="drop-kapital-wlasny" class="drop-zone mb-4" data-category="kapital-wlasny">
+                            <div class="drop-zone-title">Kapitał własny</div>
+                        </div>
+                        
+                        <div id="drop-zobowiazania" class="drop-zone" data-category="zobowiazania">
+                            <div class="drop-zone-title">Zobowiązania</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Elementy do przeciągnięcia -->
+                    <div>
+                        <h4 class="text-lg text-purple-600 mb-4">Elementy do przyporządkowania:</h4>
+                        <div id="items-container">
+                            <!-- Elementy będą dodawane przez JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex flex-wrap justify-center gap-4">
+                    <button id="check-btn" class="btn-kawaii bg-gradient-to-r from-green-400 to-green-500">
+                        <i class="fas fa-check mr-2"></i> Sprawdź odpowiedzi
+                    </button>
+                    
+                    <button id="next-btn" class="btn-kawaii bg-gradient-to-r from-purple-400 to-purple-500" disabled>
+                        <i class="fas fa-arrow-right mr-2"></i> Następne ćwiczenie
+                    </button>
+                    
+                    <button id="reset-btn" class="btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500">
+                        <i class="fas fa-redo mr-2"></i> Resetuj ćwiczenie
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Podpowiedzi -->
+        <section class="mb-12">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
+                <h3 class="text-xl text-purple-600 mb-4">Podpowiedzi</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-purple-700 mb-2">Aktywa trwałe</h4>
+                        <p class="text-gray-700 mb-4">
+                            Aktywa trwałe to składniki majątku o przewidywanym okresie ekonomicznej użyteczności dłuższym niż rok, wykorzystywane na potrzeby działalności jednostki.
+                        </p>
+                        
+                        <h4 class="font-semibold text-purple-700 mb-2">Aktywa obrotowe</h4>
+                        <p class="text-gray-700">
+                            Aktywa obrotowe to składniki majątku, które są przeznaczone do zbycia lub zużycia w ciągu 12 miesięcy od dnia bilansowego lub w ciągu normalnego cyklu operacyjnego.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold text-purple-700 mb-2">Kapitał własny</h4>
+                        <p class="text-gray-700 mb-4">
+                            Kapitał własny to wartość majątku finansowanego przez właścicieli oraz z wypracowanych zysków. Stanowi różnicę między wartością aktywów a zobowiązaniami jednostki.
+                        </p>
+                        
+                        <h4 class="font-semibold text-purple-700 mb-2">Zobowiązania</h4>
+                        <p class="text-gray-700">
+                            Zobowiązania to wynikające z przeszłych zdarzeń obowiązki wykonania świadczeń o określonej wartości, które spowodują wykorzystanie już posiadanych lub przyszłych aktywów jednostki.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nawigacja między trybami -->
+        <section class="mb-12 text-center">
+            <a href="tryb-wprowadzajacy.html" class="inline-block btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500 mr-4">
+                <i class="fas fa-arrow-left mr-2"></i> Wróć do trybu wprowadzającego
+            </a>
+            <a href="tryb-quiz.html" class="inline-block btn-kawaii">
+                Przejdź do trybu quizu <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </section>
+    </main>
+
+    <!-- Stopka -->
+    <footer class="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-4">
+                <span class="inline-block mx-1">🌸</span>
+                <span class="inline-block mx-1">💜</span>
+                <span class="inline-block mx-1">🎀</span>
+                <span class="inline-block mx-1">✨</span>
+                <span class="inline-block mx-1">💫</span>
+            </div>
+            <p>&copy; 2025 Nauka Bilansu - Projekt edukacyjny</p>
+            <p class="text-purple-200 mt-2 text-sm">Strona stworzona w celach edukacyjnych</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Definicja ćwiczeń
+            const exercises = [
+                {
+                    title: "Ćwiczenie 1: Podstawowe kategorie bilansu",
+                    items: [
+                        { id: "item-1", text: "Budynek fabryki", category: "aktywa-trwale" },
+                        { id: "item-2", text: "Zapasy materiałów", category: "aktywa-obrotowe" },
+                        { id: "item-3", text: "Kredyt długoterminowy", category: "zobowiazania" },
+                        { id: "item-4", text: "Kapitał zakładowy", category: "kapital-wlasny" },
+                        { id: "item-5", text: "Środki pieniężne w kasie", category: "aktywa-obrotowe" },
+                        { id: "item-6", text: "Należności z tytułu dostaw", category: "aktywa-obrotowe" },
+                        { id: "item-7", text: "Zysk netto", category: "kapital-wlasny" },
+                        { id: "item-8", text: "Patent na technologię", category: "aktywa-trwale" }
+                    ]
+                },
+                {
+                    title: "Ćwiczenie 2: Szczegółowe pozycje bilansu",
+                    items: [
+                        { id: "item-1", text: "Maszyny produkcyjne", category: "aktywa-trwale" },
+                        { id: "item-2", text: "Zobowiązania z tytułu wynagrodzeń", category: "zobowiazania" },
+                        { id: "item-3", text: "Produkty gotowe", category: "aktywa-obrotowe" },
+                        { id: "item-4", text: "Kapitał zapasowy", category: "kapital-wlasny" },
+                        { id: "item-5", text: "Długoterminowe papiery wartościowe", category: "aktywa-trwale" },
+                        { id: "item-6", text: "Środki transportu", category: "aktywa-trwale" },
+                        { id: "item-7", text: "Zobowiązania z tytułu podatków", category: "zobowiazania" },
+                        { id: "item-8", text: "Produkcja w toku", category: "aktywa-obrotowe" }
+                    ]
+                },
+                {
+                    title: "Ćwiczenie 3: Zaawansowane pozycje bilansu",
+                    items: [
+                        { id: "item-1", text: "Wartość firmy", category: "aktywa-trwale" },
+                        { id: "item-2", text: "Udziały (akcje) własne", category: "aktywa-trwale" },
+                        { id: "item-3", text: "Rezerwy na zobowiązania", category: "zobowiazania" },
+                        { id: "item-4", text: "Zysk z lat ubiegłych", category: "kapital-wlasny" },
+                        { id: "item-5", text: "Krótkoterminowe rozliczenia międzyokresowe", category: "aktywa-obrotowe" },
+                        { id: "item-6", text: "Zaliczki na dostawy", category: "aktywa-obrotowe" },
+                        { id: "item-7", text: "Kapitał z aktualizacji wyceny", category: "kapital-wlasny" },
+                        { id: "item-8", text: "Zobowiązania wekslowe", category: "zobowiazania" }
+                    ]
+                }
+            ];
+            
+            // Zmienne globalne
+            let currentExerciseIndex = 0;
+            let currentScore = 0;
+            let totalPoints = 0;
+            
+            // Referencje do elementów DOM
+            const itemsContainer = document.getElementById('items-container');
+            const exerciseTitle = document.getElementById('exercise-title');
+            const checkBtn = document.getElementById('check-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const scoreDisplay = document.getElementById('score');
+            const totalPointsDisplay = document.getElementById('total-points');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            // Funkcja inicjalizująca ćwiczenie
+            function initExercise(exerciseIndex) {
+                const exercise = exercises[exerciseIndex];
+                
+                // Aktualizacja tytułu ćwiczenia
+                exerciseTitle.textContent = exercise.title;
+                
+                // Wyczyszczenie kontenerów
+                itemsContainer.innerHTML = '';
+                dropZones.forEach(zone => {
+                    const title = zone.querySelector('.drop-zone-title');
+                    zone.innerHTML = '';
+                    zone.appendChild(title);
+                    zone.classList.remove('feedback-correct', 'feedback-incorrect');
+                    zone.classList.remove('highlight');
+                });
+                
+                // Dodanie elementów do przeciągnięcia
+                const shuffledItems = [...exercise.items].sort(() => Math.random() - 0.5);
+                shuffledItems.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.id = item.id;
+                    itemElement.className = 'drag-item';
+                    itemElement.setAttribute('draggable', 'true');
+                    itemElement.setAttribute('data-category', item.category);
+                    itemElement.textContent = item.text;
+                    
+                    // Obsługa przeciągania
+                    itemElement.addEventListener('dragstart', handleDragStart);
+                    itemElement.addEventListener('dragend', handleDragEnd);
+                    
+                    // Obsługa dotyku dla urządzeń mobilnych
+                    itemElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+                    itemElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+                    itemElement.addEventListener('touchend', handleTouchEnd);
+                    
+                    itemsContainer.appendChild(itemElement);
+                });
+                
+                // Aktualizacja licznika punktów
+                totalPoints += exercise.items.length;
+                totalPointsDisplay.textContent = totalPoints;
+                
+                // Resetowanie przycisków
+                checkBtn.disabled = false;
+                nextBtn.disabled = true;
+            }
+            
+            // Obsługa przeciągania - start
+            function handleDragStart(e) {
+                this.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', this.id);
+                e.dataTransfer.effectAllowed = 'move';
+            }
+            
+            // Obsługa przeciągania - koniec
+            function handleDragEnd() {
+                this.classList.remove('dragging');
+            }
+            
+            // Obsługa dotyku - start (dla urządzeń mobilnych)
+            function handleTouchStart(e) {
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
+                this.classList.add('dragging');
+                
+                // Zapisanie pozycji początkowej
+                const touch = e.touches[0];
+                this.initialX = touch.clientX;
+                this.initialY = touch.clientY;
+                
+                // Utworzenie "ducha" przeciąganego elementu
+                this.style.position = 'absolute';
+                this.style.zIndex = 1000;
+                this.style.opacity = '0.8';
+                this.style.top = `${touch.clientY - this.offsetHeight / 2}px`;
+                this.style.left = `${touch.clientX - this.offsetWidth / 2}px`;
+            }
+            
+            // Obsługa dotyku - ruch (dla urządzeń mobilnych)
+            function handleTouchMove(e) {
+                if (e.cancelable) {
+                    e.preventDefault();
+                }
+                
+                const touch = e.touches[0];
+                
+                // Przesunięcie elementu za palcem
+                this.style.top = `${touch.clientY - this.offsetHeight / 2}px`;
+                this.style.left = `${touch.clientX - this.offsetWidth / 2}px`;
+                
+                // Sprawdzenie, czy element jest nad strefą upuszczania
+                const dropZone = getDropZoneAtPoint(touch.clientX, touch.clientY);
+                
+                // Podświetlenie aktywnej strefy upuszczania
+                dropZones.forEach(zone => {
+                    zone.classList.remove('highlight');
+                });
+                
+                if (dropZone) {
+                    dropZone.classList.add('highlight');
+                }
+            }
+            
+            // Obsługa dotyku - koniec (dla urządzeń mobilnych)
+            function handleTouchEnd(e) {
+                this.classList.remove('dragging');
+                
+                // Przywrócenie stylu
+                this.style.position = '';
+                this.style.zIndex = '';
+                this.style.opacity = '';
+                this.style.top = '';
+                this.style.left = '';
+                
+                // Sprawdzenie, czy element jest nad strefą upuszczania
+                const touch = e.changedTouches[0];
+                const dropZone = getDropZoneAtPoint(touch.clientX, touch.clientY);
+                
+                dropZones.forEach(zone => {
+                    zone.classList.remove('highlight');
+                });
+                
+                if (dropZone) {
+                    dropZone.appendChild(this);
+                }
+            }
+            
+            // Funkcja pomocnicza do znalezienia strefy upuszczania na podstawie współrzędnych
+            function getDropZoneAtPoint(x, y) {
+                return Array.from(dropZones).find(zone => {
+                    const rect = zone.getBoundingClientRect();
+                    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+                });
+            }
+            
+            // Obsługa upuszczania
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('highlight');
+                });
+                
+                zone.addEventListener('dragleave', function() {
+                    this.classList.remove('highlight');
+                });
+                
+                zone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('highlight');
+                    
+                    const id = e.dataTransfer.getData('text/plain');
+                    const draggedItem = document.getElementById(id);
+                    
+                    if (draggedItem) {
+                        this.appendChild(draggedItem);
+                    }
+                });
+            });
+            
+            // Sprawdzanie odpowiedzi
+            checkBtn.addEventListener('click', function() {
+                let correctCount = 0;
+                
+                dropZones.forEach(zone => {
+                    const category = zone.getAttribute('data-category');
+                    const items = zone.querySelectorAll('.drag-item');
+                    
+                    let allCorrect = true;
+                    
+                    items.forEach(item => {
+                        const itemCategory = item.getAttribute('data-category');
+                        
+                        if (itemCategory === category) {
+                            item.style.borderColor = '#10B981';
+                            item.style.backgroundColor = 'rgba(167, 243, 208, 0.2)';
+                            correctCount++;
+                        } else {
+                            item.style.borderColor = '#EF4444';
+                            item.style.backgroundColor = 'rgba(254, 202, 202, 0.2)';
+                            allCorrect = false;
+                        }
+                    });
+                    
+                    if (items.length > 0) {
+                        if (allCorrect) {
+                            zone.classList.add('feedback-correct');
+                        } else {
+                            zone.classList.add('feedback-incorrect');
+                        }
+                    }
+                });
+                
+                // Aktualizacja wyniku
+                currentScore += correctCount;
+                scoreDisplay.textContent = currentScore;
+                
+                // Dezaktywacja przycisku sprawdzania i aktywacja przycisku następnego ćwiczenia
+                this.disabled = true;
+                nextBtn.disabled = false;
+            });
+            
+            // Przejście do następnego ćwiczenia
+            nextBtn.addEventListener('click', function() {
+                currentExerciseIndex++;
+                
+                if (currentExerciseIndex < exercises.length) {
+                    initExercise(currentExerciseIndex);
+                } else {
+                    // Wszystkie ćwiczenia ukończone
+                    itemsContainer.innerHTML = '';
+                    exerciseTitle.textContent = "Gratulacje! Ukończyłeś wszystkie ćwiczenia.";
+                    
+                    const resultMessage = document.createElement('div');
+                    resultMessage.className = 'text-center p-6';
+                    
+                    const percentage = Math.round((currentScore / totalPoints) * 100);
+                    
+                    resultMessage.innerHTML = `
+                        <p class="text-2xl text-purple-600 mb-4">Twój wynik: ${currentScore} / ${totalPoints} (${percentage}%)</p>
+                        <p class="text-gray-700 mb-6">Możesz zresetować ćwiczenia, aby spróbować ponownie lub przejść do kolejnego trybu nauki.</p>
+                        <div class="flex justify-center gap-4">
+                            <button id="restart-btn" class="btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500">
+                                <i class="fas fa-redo mr-2"></i> Zresetuj wszystkie ćwiczenia
+                            </button>
+                            <a href="tryb-quiz.html" class="btn-kawaii">
+                                Przejdź do trybu quizu <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    `;
+                    
+                    itemsContainer.appendChild(resultMessage);
+                    
+                    document.getElementById('restart-btn').addEventListener('click', function() {
+                        currentExerciseIndex = 0;
+                        currentScore = 0;
+                        totalPoints = 0;
+                        scoreDisplay.textContent = currentScore;
+                        totalPointsDisplay.textContent = totalPoints;
+                        initExercise(currentExerciseIndex);
+                    });
+                    
+                    // Ukrycie przycisków nawigacji ćwiczeniami
+                    checkBtn.style.display = 'none';
+                    nextBtn.style.display = 'none';
+                    resetBtn.style.display = 'none';
+                }
+            });
+            
+            // Resetowanie bieżącego ćwiczenia
+            resetBtn.addEventListener('click', function() {
+                initExercise(currentExerciseIndex);
+            });
+            
+            // Inicjalizacja pierwszego ćwiczenia
+            initExercise(currentExerciseIndex);
+        });
+    </script>
+</body>
+</html>

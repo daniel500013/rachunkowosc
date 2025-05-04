@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tryb Wprowadzający - Nauka Bilansu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff5f9;
+        }
+        h1, h2, h3 {
+            font-family: 'Pacifico', cursive;
+        }
+        .kawaii-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #ff99cc, #ff80bf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .btn-kawaii {
+            background: linear-gradient(45deg, #ff99cc, #ff66b3);
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(255, 153, 204, 0.3);
+            transition: all 0.3s;
+        }
+        .btn-kawaii:hover {
+            box-shadow: 0 6px 8px rgba(255, 153, 204, 0.4);
+            transform: translateY(-2px);
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            border-bottom: 2px dotted #ff80bf;
+            color: #ff66b3;
+            font-weight: 500;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 300px;
+            background-color: white;
+            color: #333;
+            text-align: left;
+            border-radius: 10px;
+            border: 2px solid #ffcce6;
+            padding: 12px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: #ffcce6 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        .bilans-table td {
+            vertical-align: top;
+            border: 1px solid #ffcce6;
+            padding: 10px;
+        }
+        .bilans-table th {
+            background-color: #ffcce6;
+            color: #993366;
+            padding: 12px;
+            text-align: center;
+        }
+        .bilans-item {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .bilans-item:hover {
+            background-color: #fff0f7;
+        }
+        .bilans-item.active {
+            background-color: #ffe6f2;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Nagłówek -->
+    <header class="bg-gradient-to-r from-pink-400 to-pink-600 text-white py-8 shadow-lg relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full">
+            <div class="absolute top-4 left-4">
+                <div class="ribbon"></div>
+            </div>
+            <div class="absolute top-4 right-4">
+                <div class="ribbon"></div>
+            </div>
+            <div class="absolute bottom-0 left-0 w-full h-8 bg-white opacity-20" style="clip-path: polygon(0 100%, 100% 100%, 100% 0, 75% 50%, 50% 0, 25% 50%, 0 0);"></div>
+        </div>
+        <div class="container mx-auto px-4 relative z-10">
+            <h1 class="text-3xl md:text-4xl text-center">✨ Nauka Bilansu ✨</h1>
+            <p class="text-center mt-2 text-white font-light">Tryb wprowadzający</p>
+        </div>
+    </header>
+
+    <!-- Nawigacja -->
+    <nav class="bg-white py-4 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <a href="../index.html" class="text-pink-600 flex items-center">
+                    <i class="fas fa-home mr-2"></i>
+                    Strona główna
+                </a>
+                <div>
+                    <a href="../pages/tryb-wprowadzajacy.html" class="text-pink-600 mx-2 font-semibold">Tryb wprowadzający</a>
+                    <a href="../pages/tryb-dopasowania.html" class="text-gray-600 mx-2 hover:text-pink-600">Tryb dopasowania</a>
+                    <a href="../pages/tryb-quiz.html" class="text-gray-600 mx-2 hover:text-pink-600">Tryb quizu</a>
+                    <a href="../pages/tryb-finalny.html" class="text-gray-600 mx-2 hover:text-pink-600">Tryb praktyczny</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Główna zawartość -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Wprowadzenie -->
+        <section class="mb-12">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-pink-200">
+                <h2 class="text-2xl md:text-3xl text-pink-600 text-center mb-6">Wprowadzenie do bilansu</h2>
+                <p class="mb-4 text-gray-700">
+                    Bilans to zestawienie aktywów (majątku) i pasywów (źródeł finansowania) przedsiębiorstwa na określony dzień. Jest to jeden z podstawowych elementów sprawozdania finansowego, który dostarcza informacji o sytuacji majątkowej i finansowej jednostki gospodarczej.
+                </p>
+                <p class="mb-6 text-gray-700">
+                    Bilans jest sporządzany zgodnie z fundamentalną zasadą rachunkowości, która mówi, że suma aktywów musi być równa sumie pasywów. Innymi słowy, wszystko co firma posiada (aktywa) musi być sfinansowane z określonych źródeł (pasywa).
+                </p>
+                <div class="bg-pink-50 p-4 rounded-xl mb-6">
+                    <p class="text-center text-pink-700 font-semibold">
+                        Podstawowa zasada bilansu: Aktywa = Pasywa
+                    </p>
+                </div>
+                <p class="text-gray-700">
+                    W tej sekcji poznasz podstawowe elementy bilansu i ich znaczenie. Kliknij na poszczególne pozycje w interaktywnym bilansie poniżej, aby dowiedzieć się więcej o każdym elemencie.
+                </p>
+            </div>
+        </section>
+
+        <!-- Interaktywny bilans -->
+        <section class="mb-12">
+            <h2 class="text-2xl md:text-3xl text-pink-600 text-center mb-6">Interaktywny bilans</h2>
+            <p class="text-center text-gray-600 mb-4">
+                Kliknij na dowolny element bilansu, aby poznać jego znaczenie
+            </p>
+            
+            <div class="bg-white rounded-3xl shadow-md p-6 overflow-x-auto border-4 border-pink-200">
+                <table class="min-w-full bilans-table">
+                    <tr>
+                        <th colspan="2">AKTYWA</th>
+                        <th colspan="2">PASYWA</th>
+                    </tr>
+                    <tr>
+                        <td class="font-medium bilans-item" id="aktywa-trwale">A. Aktywa trwałe</td>
+                        <td></td>
+                        <td class="font-medium bilans-item" id="kapital-wlasny">A. Kapitał własny</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="wnip">I. Wartości niematerialne i prawne</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="kapital-zakladowy">I. Kapitał zakładowy</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="rzeczowe-at">II. Rzeczowe aktywa trwałe</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="kapital-zapasowy">II. Kapitał zapasowy</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="naleznosci-dt">III. Należności długoterminowe</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="kapital-aktualizacji">III. Kapitał z aktualizacji wyceny</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="inwestycje-dt">IV. Inwestycje długoterminowe</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="kapitaly-rezerwowe">IV. Pozostałe kapitały rezerwowe</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium bilans-item" id="aktywa-obrotowe">B. Aktywa obrotowe</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="zysk-ubiegle">V. Zysk (strata) z lat ubiegłych</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="zapasy">I. Zapasy</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="zysk-netto">VI. Zysk (strata) netto</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="naleznosci-kt">II. Należności krótkoterminowe</td>
+                        <td></td>
+                        <td class="font-medium bilans-item" id="zobowiazania">B. Zobowiązania i rezerwy na zobowiązania</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="inwestycje-kt">III. Inwestycje krótkoterminowe</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="rezerwy">I. Rezerwy na zobowiązania</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="nalezne-wplaty">C. Należne wpłaty na kapitał podstawowy</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="zobowiazania-dt">II. Zobowiązania długoterminowe</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="pl-6 bilans-item" id="udzialy-wlasne">D. Udziały (akcje) własne</td>
+                        <td></td>
+                        <td class="pl-6 bilans-item" id="zobowiazania-kt">III. Zobowiązania krótkoterminowe</td>
+                        <td></td>
+                    </tr>
+                    <tr class="font-bold bg-pink-100">
+                        <td>RAZEM</td>
+                        <td></td>
+                        <td>RAZEM</td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <!-- Panel wyjaśnień -->
+            <div class="mt-6 bg-white rounded-3xl shadow-md p-6 border-4 border-pink-200">
+                <h3 class="text-xl text-pink-600 mb-4" id="explanation-title">Wybierz element bilansu</h3>
+                <p class="text-gray-700" id="explanation-content">
+                    Kliknij na dowolny element w tabeli bilansu powyżej, aby zobaczyć jego szczegółowe wyjaśnienie.
+                </p>
+            </div>
+        </section>
+
+        <!-- Dodatkowe informacje -->
+        <section class="mb-12">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-pink-200">
+                <h2 class="text-2xl md:text-3xl text-pink-600 text-center mb-6">Kluczowe pojęcia</h2>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg text-pink-700 mb-2">Aktywa</h3>
+                    <p class="text-gray-700 mb-2">
+                        Aktywa to zasoby majątkowe o wiarygodnie określonej wartości, powstałe w wyniku przeszłych zdarzeń, które spowodują w przyszłości wpływ do jednostki korzyści ekonomicznych.
+                    </p>
+                    <p class="text-gray-700">
+                        Dzielą się na <span class="tooltip">aktywa trwałe<span class="tooltiptext">Aktywa o przewidywanym okresie ekonomicznej użyteczności dłuższym niż rok, wykorzystywane na potrzeby jednostki.</span></span> i <span class="tooltip">aktywa obrotowe<span class="tooltiptext">Aktywa przeznaczone do zbycia lub zużycia w ciągu 12 miesięcy od dnia bilansowego lub w ciągu normalnego cyklu operacyjnego.</span></span>.
+                    </p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg text-pink-700 mb-2">Pasywa</h3>
+                    <p class="text-gray-700 mb-2">
+                        Pasywa to źródła finansowania majątku jednostki. Określają, skąd pochodzą środki, które zostały wykorzystane do nabycia aktywów.
+                    </p>
+                    <p class="text-gray-700">
+                        Dzielą się na <span class="tooltip">kapitał własny<span class="tooltiptext">Kapitał wniesiony przez właścicieli oraz wypracowany przez jednostkę w toku działalności.</span></span> i <span class="tooltip">zobowiązania<span class="tooltiptext">Wynikający z przeszłych zdarzeń obowiązek wykonania świadczeń o wiarygodnie określonej wartości, które spowodują wykorzystanie już posiadanych lub przyszłych aktywów jednostki.</span></span>.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg text-pink-700 mb-2">Równowaga bilansowa</h3>
+                    <p class="text-gray-700">
+                        Podstawową zasadą bilansu jest zachowanie równowagi bilansowej, czyli równości między sumą aktywów a sumą pasywów. Zasada ta wynika z podwójnego ujmowania każdej operacji gospodarczej i jest fundamentem rachunkowości.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nawigacja między trybami -->
+        <section class="mb-12 text-center">
+            <a href="../index.html" class="inline-block btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500 mr-4">
+                <i class="fas fa-arrow-left mr-2"></i> Powrót do strony głównej
+            </a>
+            <a href="tryb-dopasowania.html" class="inline-block btn-kawaii">
+                Przejdź do trybu dopasowania <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </section>
+    </main>
+
+    <!-- Stopka -->
+    <footer class="bg-gradient-to-r from-pink-500 to-purple-500 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-4">
+                <span class="inline-block mx-1">🌸</span>
+                <span class="inline-block mx-1">💖</span>
+                <span class="inline-block mx-1">🎀</span>
+                <span class="inline-block mx-1">✨</span>
+                <span class="inline-block mx-1">💫</span>
+            </div>
+            <p>&copy; 2025 Nauka Bilansu - Projekt edukacyjny</p>
+            <p class="text-pink-200 mt-2 text-sm">Strona stworzona w celach edukacyjnych</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const explanationTitle = document.getElementById('explanation-title');
+            const explanationContent = document.getElementById('explanation-content');
+            const bilansItems = document.querySelectorAll('.bilans-item');
+            
+            // Definicje poszczególnych elementów bilansu
+            const definitions = {
+                'aktywa-trwale': {
+                    title: 'Aktywa trwałe',
+                    content: 'Aktywa trwałe to składniki majątku, które są wykorzystywane przez przedsiębiorstwo w okresie dłuższym niż 12 miesięcy. Charakteryzują się długim okresem użytkowania i zwykle nie są przeznaczone do sprzedaży w ramach zwykłej działalności operacyjnej.'
+                },
+                'wnip': {
+                    title: 'Wartości niematerialne i prawne',
+                    content: 'Wartości niematerialne i prawne to nabyte przez jednostkę, zaliczane do aktywów trwałych, prawa majątkowe nadające się do gospodarczego wykorzystania. Obejmują m.in. licencje, patenty, znaki towarowe, oprogramowanie komputerowe, wartość firmy oraz koszty zakończonych prac rozwojowych.'
+                },
+                'rzeczowe-at': {
+                    title: 'Rzeczowe aktywa trwałe',
+                    content: 'Rzeczowe aktywa trwałe to środki trwałe, które są kontrolowane przez jednostkę w wyniku przeszłych zdarzeń, z których jednostka osiągnie w przyszłości korzyści ekonomiczne. Obejmują m.in. grunty, budynki, maszyny, urządzenia, środki transportu oraz środki trwałe w budowie.'
+                },
+                'naleznosci-dt': {
+                    title: 'Należności długoterminowe',
+                    content: 'Należności długoterminowe to kwoty należne jednostce od innych podmiotów, których termin wymagalności jest dłuższy niż 12 miesięcy licząc od dnia bilansowego. Przykładem mogą być długoterminowe pożyczki udzielone innym podmiotom lub należności z tytułu leasingu finansowego.'
+                },
+                'inwestycje-dt': {
+                    title: 'Inwestycje długoterminowe',
+                    content: 'Inwestycje długoterminowe to aktywa nabyte w celu osiągnięcia korzyści ekonomicznych, które wynikają z przyrostu wartości tych aktywów lub uzyskania z nich przychodów w formie odsetek, dywidend lub innych pożytków. Obejmują m.in. nieruchomości inwestycyjne, udziały i akcje w innych jednostkach, długoterminowe papiery wartościowe.'
+                },
+                'aktywa-obrotowe': {
+                    title: 'Aktywa obrotowe',
+                    content: 'Aktywa obrotowe to składniki majątku, które są wykorzystywane w cyklu operacyjnym przedsiębiorstwa nieprzekraczającym 12 miesięcy lub są przeznaczone do zbycia lub zużycia w ciągu 12 miesięcy od dnia bilansowego. Charakteryzują się większą płynnością niż aktywa trwałe.'
+                },
+                'zapasy': {
+                    title: 'Zapasy',
+                    content: 'Zapasy to aktywa przeznaczone do sprzedaży w toku zwykłej działalności gospodarczej, będące w trakcie produkcji lub przeznaczone do zużycia w procesie produkcji lub świadczenia usług. Obejmują m.in. materiały, półprodukty i produkty w toku, produkty gotowe oraz towary.'
+                },
+                'naleznosci-kt': {
+                    title: 'Należności krótkoterminowe',
+                    content: 'Należności krótkoterminowe to kwoty należne jednostce od innych podmiotów, których termin wymagalności jest krótszy niż 12 miesięcy licząc od dnia bilansowego. Obejmują m.in. należności z tytułu dostaw i usług, należności z tytułu podatków, należności od pracowników.'
+                },
+                'inwestycje-kt': {
+                    title: 'Inwestycje krótkoterminowe',
+                    content: 'Inwestycje krótkoterminowe to aktywa nabyte w celu osiągnięcia korzyści ekonomicznych, które są płynne lub przeznaczone do zbycia w ciągu 12 miesięcy od dnia bilansowego. Obejmują m.in. środki pieniężne w kasie i na rachunkach bankowych, krótkoterminowe papiery wartościowe, udzielone pożyczki krótkoterminowe.'
+                },
+                'nalezne-wplaty': {
+                    title: 'Należne wpłaty na kapitał podstawowy',
+                    content: 'Należne wpłaty na kapitał podstawowy to kwoty należne od udziałowców/akcjonariuszy, którzy zadeklarowali objęcie udziałów/akcji, ale jeszcze nie dokonali wpłaty. Jest to pozycja występująca rzadko, ponieważ najczęściej kapitał jest w pełni opłacony.'
+                },
+                'udzialy-wlasne': {
+                    title: 'Udziały (akcje) własne',
+                    content: 'Udziały (akcje) własne to udziały/akcje własnej spółki, które zostały nabyte przez tę spółkę. Wykazywane są jako odrębna pozycja aktywów, ale jednocześnie pomniejszają kapitał własny w pasywach. Zgodnie z prawem, udziały własne podlegają ograniczeniom co do czasu ich posiadania.'
+                },
+                'kapital-wlasny': {
+                    title: 'Kapitał własny',
+                    content: 'Kapitał własny to wartość majątku finansowanego przez właścicieli oraz z wypracowanych zysków. Stanowi różnicę między wartością aktywów a zobowiązaniami jednostki. Jest to zatem ta część pasywów, która nie generuje kosztu w postaci odsetek.'
+                },
+                'kapital-zakladowy': {
+                    title: 'Kapitał zakładowy',
+                    content: 'Kapitał zakładowy to podstawowy kapitał własny, wniesiony przez właścicieli przy zakładaniu spółki. Jego wysokość jest określona w umowie spółki lub statucie i podlega rejestracji w KRS. W spółkach z o.o. nazywany jest kapitałem zakładowym, a w spółkach akcyjnych - kapitałem akcyjnym.'
+                },
+                'kapital-zapasowy': {
+                    title: 'Kapitał zapasowy',
+                    content: 'Kapitał zapasowy to część kapitału własnego utworzona z odpisów z zysku, nadwyżek przy emisji akcji powyżej ich wartości nominalnej (agio) lub dopłat wspólników. Służy do pokrycia strat bilansowych i innych celów określonych w umowie spółki lub statucie.'
+                },
+                'kapital-aktualizacji': {
+                    title: 'Kapitał z aktualizacji wyceny',
+                    content: 'Kapitał z aktualizacji wyceny powstaje w wyniku przeszacowania wartości aktywów trwałych zgodnie z odrębnymi przepisami. Jest to pozycja księgowa, która nie wiąże się z rzeczywistym przepływem środków pieniężnych.'
+                },
+                'kapitaly-rezerwowe': {
+                    title: 'Pozostałe kapitały rezerwowe',
+                    content: 'Pozostałe kapitały rezerwowe to część kapitału własnego tworzona zgodnie z umową spółki lub statutem, zwykle na określone cele. Mogą być utworzone na mocy uchwały wspólników/akcjonariuszy o przeznaczeniu części zysku na dany cel.'
+                },
+                'zysk-ubiegle': {
+                    title: 'Zysk (strata) z lat ubiegłych',
+                    content: 'Zysk (strata) z lat ubiegłych to niepodzielony zysk lub niepokryta strata z poprzednich okresów sprawozdawczych. W przypadku zysku, wspólnicy/akcjonariusze mogą podjąć decyzję o jego podziale, np. na wypłatę dywidendy lub zasilenie kapitałów. W przypadku straty, musi być ona pokryta z kapitałów.'
+                },
+                'zysk-netto': {
+                    title: 'Zysk (strata) netto',
+                    content: 'Zysk (strata) netto to wynik finansowy jednostki za bieżący okres sprawozdawczy, po odliczeniu podatku dochodowego. Stanowi różnicę między przychodami a kosztami ich uzyskania, skorygowaną o wynik na operacjach nadzwyczajnych i podatek dochodowy.'
+                },
+                'zobowiazania': {
+                    title: 'Zobowiązania i rezerwy na zobowiązania',
+                    content: 'Zobowiązania to wynikające z przeszłych zdarzeń obowiązki wykonania świadczeń o określonej wartości, które spowodują wykorzystanie już posiadanych lub przyszłych aktywów jednostki. Rezerwy to zobowiązania, których termin wymagalności lub kwota nie są pewne.'
+                },
+                'rezerwy': {
+                    title: 'Rezerwy na zobowiązania',
+                    content: 'Rezerwy na zobowiązania to zobowiązania, których termin wymagalności lub kwota nie są pewne. Tworzone są w celu uwzględnienia przyszłych, prawdopodobnych zobowiązań, które mogą obciążyć jednostkę. Przykładami są rezerwy na odroczony podatek dochodowy, świadczenia emerytalne, naprawy gwarancyjne.'
+                },
+                'zobowiazania-dt': {
+                    title: 'Zobowiązania długoterminowe',
+                    content: 'Zobowiązania długoterminowe to zobowiązania, których termin wymagalności przypada na okres dłuższy niż 12 miesięcy licząc od dnia bilansowego. Obejmują m.in. kredyty i pożyczki długoterminowe, zobowiązania z tytułu emisji dłużnych papierów wartościowych, zobowiązania z tytułu leasingu finansowego.'
+                },
+                'zobowiazania-kt': {
+                    title: 'Zobowiązania krótkoterminowe',
+                    content: 'Zobowiązania krótkoterminowe to zobowiązania, których termin wymagalności przypada na okres krótszy niż 12 miesięcy licząc od dnia bilansowego. Obejmują m.in. zobowiązania z tytułu dostaw i usług, kredyty i pożyczki krótkoterminowe, zobowiązania z tytułu podatków, wynagrodzeń oraz innych świadczeń.'
+                }
+            };
+            
+            // Dodanie obsługi kliknięć na elementy bilansu
+            bilansItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Usunięcie klasy active ze wszystkich elementów
+                    bilansItems.forEach(el => el.classList.remove('active'));
+                    
+                    // Dodanie klasy active do klikniętego elementu
+                    this.classList.add('active');
+                    
+                    // Aktualizacja panelu wyjaśnień
+                    const id = this.id;
+                    if (definitions[id]) {
+                        explanationTitle.textContent = definitions[id].title;
+                        explanationContent.textContent = definitions[id].content;
+                        
+                        // Płynne przewijanie do panelu wyjaśnień na urządzeniach mobilnych
+                        if (window.innerWidth < 768) {
+                            document.getElementById('explanation-title').scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+            
+            // Inicjalizacja tooltipów
+            const tooltips = document.querySelectorAll('.tooltip');
+            tooltips.forEach(tooltip => {
+                tooltip.addEventListener('touchstart', function(e) {
+                    // Obsługa dotknięć na urządzeniach mobilnych
+                    e.preventDefault();
+                    const tooltiptext = this.querySelector('.tooltiptext');
+                    tooltiptext.style.visibility = tooltiptext.style.visibility === 'visible' ? 'hidden' : 'visible';
+                    tooltiptext.style.opacity = tooltiptext.style.opacity === '1' ? '0' : '1';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

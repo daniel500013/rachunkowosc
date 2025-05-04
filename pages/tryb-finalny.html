@@ -1,0 +1,1603 @@
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Tryb Praktyczny - Nauka Bilansu</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+        <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff5f9;
+        }
+        h1, h2, h3 {
+            font-family: 'Pacifico', cursive;
+        }
+        .kawaii-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #ff99cc, #ff80bf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .btn-kawaii {
+            background: linear-gradient(45deg, #ff99cc, #ff66b3);
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(255, 153, 204, 0.3);
+            transition: all 0.3s;
+        }
+        .btn-kawaii:hover {
+            box-shadow: 0 6px 8px rgba(255, 153, 204, 0.4);
+            transform: translateY(-2px);
+        }
+        .drag-item {
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s;
+            background-color: white;
+            border: 2px solid #ffcce6;
+            border-radius: 12px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .drag-item:hover {
+            box-shadow: 0 4px 6px rgba(255, 102, 179, 0.2);
+            transform: translateY(-2px);
+        }
+        .drag-item.dragging {
+            opacity: 0.5;
+            box-shadow: 0 8px 15px rgba(255, 102, 179, 0.3);
+        }
+        .drop-zone {
+            min-height: 40px;
+            border: 2px dashed #ffcce6;
+            border-radius: 8px;
+            background-color: rgba(255, 242, 246, 0.5);
+            transition: all 0.2s;
+            padding: 0.5rem;
+        }
+        .drop-zone.highlight {
+            background-color: rgba(255, 204, 230, 0.3);
+            border-color: #ff80bf;
+        }
+        .drop-zone-title {
+            color: #ff80bf;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .feedback-correct {
+            background-color: rgba(167, 243, 208, 0.3);
+            border-color: #10B981;
+        }
+        .feedback-incorrect {
+            background-color: rgba(254, 202, 202, 0.3);
+            border-color: #EF4444;
+        }
+        .score-display {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #ff66b3;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background-color: white;
+            border-radius: 50px;
+            border: 2px solid #ffcce6;
+            box-shadow: 0 4px 6px rgba(255, 153, 204, 0.2);
+        }
+        .bilans-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1rem;
+        }
+        .bilans-table th {
+            background-color: #ffcce6;
+            color: #993366;
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid #ffcce6;
+            font-weight: 600;
+        }
+        .bilans-table td {
+            border: 1px solid #ffcce6;
+            padding: 0.5rem;
+            vertical-align: top;
+        }
+        .bilans-table tr:nth-child(even) {
+            background-color: rgba(255, 242, 246, 0.5);
+        }
+        .category-cell {
+            font-weight: 600;
+            color: #ff80bf;
+        }
+        .input-field {
+            width: 100%;
+            border: 2px solid #ffcce6;
+            border-radius: 8px;
+            padding: 0.5rem;
+            transition: all 0.2s;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #ff80bf;
+            box-shadow: 0 0 0 3px rgba(255, 153, 204, 0.2);
+        }
+        .input-field.correct {
+            border-color: #10B981;
+            background-color: rgba(167, 243, 208, 0.2);
+        }
+        .input-field.incorrect {
+            border-color: #EF4444;
+            background-color: rgba(254, 202, 202, 0.2);
+        }
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ff80bf;
+        }
+        @media (max-width: 768px) {
+            .drag-item {
+                margin-bottom: 0.75rem;
+            }
+            .bilans-table th,
+            .bilans-table td {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.9rem;
+            }
+        }
+        </style>
+    </head>
+    <body>
+        <!-- Nagłówek -->
+        <header class="bg-gradient-to-r from-pink-400 to-pink-600 text-white py-8 shadow-lg relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-full">
+                <div class="absolute top-4 left-4">
+                    <div class="ribbon"></div>
+                </div>
+                <div class="absolute top-4 right-4">
+                    <div class="ribbon"></div>
+                </div>
+                <div class="absolute bottom-0 left-0 w-full h-8 bg-white opacity-20" style="clip-path: polygon(0 100%, 100% 100%, 100% 0, 75% 50%, 50% 0, 25% 50%, 0 0);"></div>
+            </div>
+            <div class="container mx-auto px-4 relative z-10">
+                <h1 class="text-3xl md:text-4xl text-center">✨ Nauka Bilansu ✨</h1>
+                <p class="text-center mt-2 text-white font-light">Tryb praktyczny</p>
+            </div>
+        </header>
+        <!-- Nawigacja -->
+        <nav class="bg-white py-4 shadow-md">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-wrap justify-between items-center">
+                    <a href="../index.html" class="text-pink-600 flex items-center mb-2 md:mb-0">
+                        <i class="fas fa-home mr-2"></i>
+                        Strona główna
+                    </a>
+                    <div class="flex flex-wrap">
+                        <a href="tryb-wprowadzajacy.html" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">Tryb wprowadzający</a>
+                        <a href="tryb-dopasowania.html" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">Tryb dopasowania</a>
+                        <a href="tryb-quiz.html" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">Tryb quizu</a>
+                        <a href="tryb-finalny.html" class="text-pink-600 mx-2 font-semibold mb-2 md:mb-0">Tryb praktyczny</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- Główna zawartość -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Wprowadzenie -->
+            <section class="mb-12 intro-section">
+                <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-pink-200">
+                    <h2 class="text-2xl md:text-3xl text-pink-600 text-center mb-6">Praktyczne budowanie bilansu</h2>
+                    <p class="mb-4 text-gray-700">
+                        W tym trybie będziesz mógł samodzielnie zbudować bilans, przyporządkowując wartości do odpowiednich pozycji lub uzupełniając brakujące dane. To praktyczne zastosowanie wiedzy zdobytej w poprzednich trybach nauki.
+                    </p>
+                    <p class="mb-4 text-gray-700">
+                        Pamiętaj o podstawowej zasadzie bilansu: suma aktywów musi być równa sumie pasywów. W tym trybie będziesz pracować z rzeczywistymi liczbami, aby zobaczyć, jak ta zasada działa w praktyce.
+                    </p>
+                    <p class="text-gray-700">
+                        Dostępne są trzy rodzaje ćwiczeń:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div class="bg-pink-50 p-4 rounded-xl">
+                            <h3 class="text-lg text-pink-600 font-semibold mb-2">Uzupełnianie bilansu</h3>
+                            <p class="text-gray-700 text-sm">
+                                Wypełnij brakujące wartości w bilansie, aby zachować równowagę między aktywami a pasywami.
+                            </p>
+                        </div>
+                        <div class="bg-pink-50 p-4 rounded-xl">
+                            <h3 class="text-lg text-pink-600 font-semibold mb-2">Obliczanie sum</h3>
+                            <p class="text-gray-700 text-sm">
+                                Oblicz sumy poszczególnych kategorii i sprawdź równowagę bilansu.
+                            </p>
+                        </div>
+                        <div class="bg-pink-50 p-4 rounded-xl">
+                            <h3 class="text-lg text-pink-600 font-semibold mb-2">Analiza zmian</h3>
+                            <p class="text-gray-700 text-sm">
+                                Przeanalizuj, jak różne operacje gospodarcze wpływają na poszczególne pozycje i sumy bilansu.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-8 flex flex-wrap justify-center gap-4">
+                        <button id="start-easy-btn" class="btn-kawaii">
+                            <i class="fas fa-play mr-2"></i>
+                            Rozpocznij ćwiczenie łatwe
+                        </button>
+                        <button id="start-medium-btn" class="btn-kawaii bg-gradient-to-r from-purple-400 to-purple-500">
+                            <i class="fas fa-star mr-2"></i>
+                            Rozpocznij ćwiczenie średnie
+                        </button>
+                        <button id="start-hard-btn" class="btn-kawaii bg-gradient-to-r from-red-400 to-red-500">
+                            <i class="fas fa-fire mr-2"></i>
+                            Rozpocznij ćwiczenie trudne
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <!-- Sekcja ćwiczenia -->
+            <section class="mb-12 practice-section hidden">
+                <!-- Nagłówek ćwiczenia -->
+                <div class="mb-6 flex flex-wrap justify-between items-center">
+                    <div class="score-display mb-4 md:mb-0">
+                        Punkty:
+                        <span id="score">0</span> /
+                        <span id="total-points">0</span>
+                    </div>
+                    <div class="timer mb-4 md:mb-0">
+                        Czas:
+                        <span id="timer">00:00</span>
+                    </div>
+                    <div>
+                        <select id="difficulty-select" class="border border-pink-200 rounded-full py-2 px-4 bg-white text-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-300">
+                            <option value="easy">Poziom łatwy</option>
+                            <option value="medium">Poziom średni</option>
+                            <option value="hard">Poziom trudny</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Treść ćwiczenia -->
+                <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-pink-200 mb-6">
+                    <h3 class="text-xl text-pink-600 mb-4" id="exercise-title">Tytuł ćwiczenia</h3>
+                    <p id="exercise-description" class="text-gray-700 mb-6">Opis ćwiczenia</p>
+                    <div id="exercise-content" class="mb-6">
+                        <!-- Zawartość ćwiczenia (tabela, pola input itp.) będzie dodawana przez JavaScript --></div>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button id="check-btn" class="btn-kawaii bg-gradient-to-r from-green-400 to-green-500">
+                            <i class="fas fa-check mr-2"></i>
+                            Sprawdź odpowiedzi
+                        </button>
+                        <button id="hint-btn" class="btn-kawaii bg-gradient-to-r from-yellow-400 to-yellow-500">
+                            <i class="fas fa-lightbulb mr-2"></i>
+                            Podpowiedź
+                        </button>
+                        <button id="reset-btn" class="btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500">
+                            <i class="fas fa-redo mr-2"></i>
+                            Resetuj ćwiczenie
+                        </button>
+                    </div>
+                </div>
+                <!-- Wyjaśnienie -->
+                <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-pink-200 mb-6 hidden" id="explanation-container">
+                    <h3 class="text-xl text-pink-600 mb-4">Wyjaśnienie</h3>
+                    <p id="explanation-text" class="text-gray-700 mb-4"></p>
+                    <div class="flex justify-center mt-4">
+                        <button id="next-btn" class="btn-kawaii">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            Następne ćwiczenie
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <!-- Wyniki końcowe -->
+            <section class="mb-12 results-section hidden">
+                <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-pink-200">
+                    <h2 class="text-2xl md:text-3xl text-pink-600 text-center mb-6">Wyniki ćwiczenia</h2>
+                    <div class="text-center mb-6">
+                        <div class="inline-block p-4 bg-pink-50 rounded-full mb-4">
+                            <i class="fas fa-trophy text-5xl text-pink-500"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-800">Gratulacje!</h3>
+                        <p class="text-gray-700">Ukończyłeś praktyczne ćwiczenie z bilansu.</p>
+                    </div>
+                    <div class="bg-pink-50 rounded-xl p-6 mb-6">
+                        <div class="flex flex-wrap justify-center gap-6 mb-4">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-pink-600" id="final-score">0</div>
+                                <div class="text-sm text-gray-600">Punkty</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-pink-600" id="final-percent">0%</div>
+                                <div class="text-sm text-gray-600">Wynik procentowy</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-pink-600" id="final-time">00:00</div>
+                                <div class="text-sm text-gray-600">Czas ukończenia</div>
+                            </div>
+                        </div>
+                        <div class="text-center" id="result-message">
+                            <!-- Wiadomość będzie dodana przez JavaScript --></div>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button id="restart-practice-btn" class="btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500">
+                            <i class="fas fa-redo mr-2"></i>
+                            Rozpocznij ćwiczenie ponownie
+                        </button>
+                        <button id="switch-level-btn" class="btn-kawaii bg-gradient-to-r from-purple-400 to-purple-500">
+                            <i class="fas fa-exchange-alt mr-2"></i>
+                            Zmień poziom
+                        </button>
+                        <a href="../index.html" class="btn-kawaii">
+                            Powrót do strony głównej
+                            <i class="fas fa-home ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            <!-- Nawigacja między trybami -->
+            <section class="mb-12 text-center navigation-section">
+                <a href="tryb-quiz.html" class="inline-block btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500 mr-4">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Wróć do trybu quizu
+                </a>
+                <a href="../index.html" class="inline-block btn-kawaii">
+                    Powrót do strony głównej
+                    <i class="fas fa-home ml-2"></i>
+                </a>
+            </section>
+        </main>
+        <!-- Stopka -->
+        <footer class="bg-gradient-to-r from-pink-500 to-pink-600 text-white py-8">
+            <div class="container mx-auto px-4 text-center">
+                <div class="mb-4">
+                    <span class="inline-block mx-1">🌸</span>
+                    <span class="inline-block mx-1">💖</span>
+                    <span class="inline-block mx-1">🎀</span>
+                    <span class="inline-block mx-1">✨</span>
+                    <span class="inline-block mx-1">💫</span>
+                </div>
+                <p>&copy; 2025 Nauka Bilansu - Projekt edukacyjny</p>
+                <p class="text-pink-200 mt-2 text-sm">Strona stworzona w celach edukacyjnych</p>
+            </div>
+        </footer>
+        <!-- JavaScript -->
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Referencje do elementów DOM
+            const introSection = document.querySelector('.intro-section');
+            const practiceSection = document.querySelector('.practice-section');
+            const resultsSection = document.querySelector('.results-section');
+            const navigationSection = document.querySelector('.navigation-section');
+            const exerciseTitle = document.getElementById('exercise-title');
+            const exerciseDescription = document.getElementById('exercise-description');
+            const exerciseContent = document.getElementById('exercise-content');
+            const scoreDisplay = document.getElementById('score');
+            const totalPointsDisplay = document.getElementById('total-points');
+            const timerDisplay = document.getElementById('timer');
+            const checkBtn = document.getElementById('check-btn');
+            const hintBtn = document.getElementById('hint-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const startEasyBtn = document.getElementById('start-easy-btn');
+            const startMediumBtn = document.getElementById('start-medium-btn');
+            const startHardBtn = document.getElementById('start-hard-btn');
+            const restartPracticeBtn = document.getElementById('restart-practice-btn');
+            const switchLevelBtn = document.getElementById('switch-level-btn');
+            const difficultySelect = document.getElementById('difficulty-select');
+            const explanationContainer = document.getElementById('explanation-container');
+            const explanationText = document.getElementById('explanation-text');
+            const finalScore = document.getElementById('final-score');
+            const finalPercent = document.getElementById('final-percent');
+            const finalTime = document.getElementById('final-time');
+            const resultMessage = document.getElementById('result-message');
+            
+            // Definicje ćwiczeń dla poziomu łatwego
+            const easyExercises = [
+                {
+                    title: "Uzupełnianie bilansu - poziom łatwy",
+                    description: "Uzupełnij brakujące wartości w bilansie, aby zachować równowagę między aktywami a pasywami. Suma aktywów powinna wynosić 500 000 zł.",
+                    type: "fill",
+                    content: {
+                        assets: [
+                            { name: "A. Aktywa trwałe", value: 300000, editable: false },
+                            { name: "I. Wartości niematerialne i prawne", value: 50000, editable: false },
+                            { name: "II. Rzeczowe aktywa trwałe", value: 200000, editable: false },
+                            { name: "III. Należności długoterminowe", value: 30000, editable: false },
+                            { name: "IV. Inwestycje długoterminowe", value: 20000, editable: false },
+                            { name: "B. Aktywa obrotowe", value: 200000, editable: false },
+                            { name: "I. Zapasy", value: 80000, editable: false },
+                            { name: "II. Należności krótkoterminowe", value: 70000, editable: false },
+                            { name: "III. Inwestycje krótkoterminowe", value: 50000, editable: false }
+                        ],
+                        liabilities: [
+                            { name: "A. Kapitał własny", value: 300000, editable: false },
+                            { name: "I. Kapitał zakładowy", value: 200000, editable: false },
+                            { name: "II. Kapitał zapasowy", value: 50000, editable: false },
+                            { name: "III. Zysk (strata) netto", value: 50000, editable: false },
+                            { name: "B. Zobowiązania i rezerwy", value: null, editable: true },
+                            { name: "I. Rezerwy na zobowiązania", value: 20000, editable: false },
+                            { name: "II. Zobowiązania długoterminowe", value: 100000, editable: false },
+                            { name: "III. Zobowiązania krótkoterminowe", value: null, editable: true }
+                        ]
+                    },
+                    solution: {
+                        "B. Zobowiązania i rezerwy": 200000,
+                        "III. Zobowiązania krótkoterminowe": 80000
+                    },
+                    hint: "Pamiętaj, że suma aktywów musi być równa sumie pasywów. Zobowiązania i rezerwy to suma pozycji I, II i III w części B pasywów.",
+                    explanation: "Aby bilans się zgadzał, suma aktywów (500 000 zł) musi być równa sumie pasywów. Kapitał własny wynosi 300 000 zł, więc zobowiązania i rezerwy muszą wynosić 200 000 zł. Znając wartość rezerw (20 000 zł) i zobowiązań długoterminowych (100 000 zł), możemy obliczyć zobowiązania krótkoterminowe: 200 000 - 20 000 - 100 000 = 80 000 zł.",
+                    points: 2
+                },
+                {
+                    title: "Obliczanie sum - poziom łatwy",
+                    description: "Oblicz sumę aktywów trwałych oraz sumę aktywów obrotowych, a następnie sumę aktywów ogółem.",
+                    type: "calculate",
+                    content: {
+                        assets: [
+                            { name: "A. Aktywa trwałe", value: null, editable: true },
+                            { name: "I. Wartości niematerialne i prawne", value: 30000, editable: false },
+                            { name: "II. Rzeczowe aktywa trwałe", value: 150000, editable: false },
+                            { name: "III. Należności długoterminowe", value: 20000, editable: false },
+                            { name: "IV. Inwestycje długoterminowe", value: 50000, editable: false },
+                            { name: "B. Aktywa obrotowe", value: null, editable: true },
+                            { name: "I. Zapasy", value: 60000, editable: false },
+                            { name: "II. Należności krótkoterminowe", value: 40000, editable: false },
+                            { name: "III. Inwestycje krótkoterminowe", value: 30000, editable: false },
+                            { name: "AKTYWA RAZEM", value: null, editable: true }
+                        ]
+                    },
+                    solution: {
+                        "A. Aktywa trwałe": 250000,
+                        "B. Aktywa obrotowe": 130000,
+                        "AKTYWA RAZEM": 380000
+                    },
+                    hint: "Aby obliczyć sumę aktywów trwałych, dodaj wartości pozycji I, II, III i IV w części A. Podobnie dla aktywów obrotowych.",
+                    explanation: "Suma aktywów trwałych to suma pozycji I, II, III i IV w części A: 30 000 + 150 000 + 20 000 + 50 000 = 250 000 zł. Suma aktywów obrotowych to suma pozycji I, II i III w części B: 60 000 + 40 000 + 30 000 = 130 000 zł. Suma aktywów ogółem to suma aktywów trwałych i obrotowych: 250 000 + 130 000 = 380 000 zł.",
+                    points: 3
+                },
+                {
+                    title: "Analiza zmian - poziom łatwy",
+                    description: "Firma zakupiła nową maszynę produkcyjną za 50 000 zł, płacąc gotówką. Uzupełnij bilans po tej operacji.",
+                    type: "analyze",
+                    content: {
+                        initialBalance: {
+                            assets: [
+                                { name: "A. Aktywa trwałe", value: 200000 },
+                                { name: "I. Wartości niematerialne i prawne", value: 20000 },
+                                { name: "II. Rzeczowe aktywa trwałe", value: 150000 },
+                                { name: "III. Należności długoterminowe", value: 10000 },
+                                { name: "IV. Inwestycje długoterminowe", value: 20000 },
+                                { name: "B. Aktywa obrotowe", value: 100000 },
+                                { name: "I. Zapasy", value: 30000 },
+                                { name: "II. Należności krótkoterminowe", value: 20000 },
+                                { name: "III. Inwestycje krótkoterminowe", value: 50000 }
+                            ],
+                            liabilities: [
+                                { name: "A. Kapitał własny", value: 200000 },
+                                { name: "I. Kapitał zakładowy", value: 150000 },
+                                { name: "II. Kapitał zapasowy", value: 20000 },
+                                { name: "III. Zysk (strata) netto", value: 30000 },
+                                { name: "B. Zobowiązania i rezerwy", value: 100000 },
+                                { name: "I. Rezerwy na zobowiązania", value: 10000 },
+                                { name: "II. Zobowiązania długoterminowe", value: 50000 },
+                                { name: "III. Zobowiązania krótkoterminowe", value: 40000 }
+                            ]
+                        },
+                        fieldsToFill: [
+                            "II. Rzeczowe aktywa trwałe",
+                            "III. Inwestycje krótkoterminowe"
+                        ]
+                    },
+                    solution: {
+                        "II. Rzeczowe aktywa trwałe": 200000,
+                        "III. Inwestycje krótkoterminowe": 0
+                    },
+                    hint: "Zakup maszyny zwiększa wartość rzeczowych aktywów trwałych, a płatność gotówką zmniejsza inwestycje krótkoterminowe (środki pieniężne).",
+                    explanation: "Zakup maszyny produkcyjnej za gotówkę powoduje dwie zmiany w bilansie: zwiększenie wartości rzeczowych aktywów trwałych o 50 000 zł (z 150 000 zł do 200 000 zł) oraz zmniejszenie inwestycji krótkoterminowych (środków pieniężnych) o tę samą kwotę (z 50 000 zł do 0 zł). Suma aktywów pozostaje bez zmian (300 000 zł).",
+                    points: 2
+                }
+            ];
+            
+            // Definicje ćwiczeń dla poziomu średniego
+            const mediumExercises = [
+                {
+                    title: "Uzupełnianie bilansu - poziom średni",
+                    description: "Uzupełnij brakujące wartości w bilansie. Suma pasywów wynosi 800 000 zł.",
+                    type: "fill",
+                    content: {
+                        assets: [
+                            { name: "A. Aktywa trwałe", value: null, editable: true },
+                            { name: "I. Wartości niematerialne i prawne", value: 70000, editable: false },
+                            { name: "II. Rzeczowe aktywa trwałe", value: 280000, editable: false },
+                            { name: "III. Należności długoterminowe", value: null, editable: true },
+                            { name: "IV. Inwestycje długoterminowe", value: 50000, editable: false },
+                            { name: "B. Aktywa obrotowe", value: 350000, editable: false },
+                            { name: "I. Zapasy", value: 120000, editable: false },
+                            { name: "II. Należności krótkoterminowe", value: 130000, editable: false },
+                            { name: "III. Inwestycje krótkoterminowe", value: 100000, editable: false },
+                            { name: "AKTYWA RAZEM", value: 800000, editable: false }
+                        ],
+                        liabilities: [
+                            { name: "A. Kapitał własny", value: 450000, editable: false },
+                            { name: "I. Kapitał zakładowy", value: null, editable: true },
+                            { name: "II. Kapitał zapasowy", value: 100000, editable: false },
+                            { name: "III. Kapitał z aktualizacji wyceny", value: 30000, editable: false },
+                            { name: "IV. Zysk (strata) netto", value: 70000, editable: false },
+                            { name: "B. Zobowiązania i rezerwy", value: 350000, editable: false },
+                            { name: "I. Rezerwy na zobowiązania", value: 40000, editable: false },
+                            { name: "II. Zobowiązania długoterminowe", value: 150000, editable: false },
+                            { name: "III. Zobowiązania krótkoterminowe", value: null, editable: true },
+                            { name: "PASYWA RAZEM", value: 800000, editable: false }
+                        ]
+                    },
+                    solution: {
+                        "A. Aktywa trwałe": 450000,
+                        "III. Należności długoterminowe": 50000,
+                        "I. Kapitał zakładowy": 250000,
+                        "III. Zobowiązania krótkoterminowe": 160000
+                    },
+                    hint: "Oblicz najpierw wartość A. Aktywa trwałe jako sumę pozycji I, II, III i IV. Następnie oblicz III. Należności długoterminowe jako różnicę między aktywami trwałymi a sumą pozostałych pozycji. W pasywach, oblicz pozostałe wartości na podstawie sum częściowych i całkowitych.",
+                    explanation: "Aktywa trwałe to 450 000 zł (800 000 zł - 350 000 zł). Należności długoterminowe to 50 000 zł (450 000 zł - 70 000 zł - 280 000 zł - 50 000 zł). Kapitał zakładowy to 250 000 zł (450 000 zł - 100 000 zł - 30 000 zł - 70 000 zł). Zobowiązania krótkoterminowe to 160 000 zł (350 000 zł - 40 000 zł - 150 000 zł).",
+                    points: 4
+                },
+                {
+                    title: "Analiza zmian - poziom średni",
+                    description: "Firma zaciągnęła kredyt bankowy w wysokości 100 000 zł oraz zakupiła nową linię produkcyjną za 150 000 zł, z czego 80 000 zł zapłaciła gotówką, a na resztę otrzymała kredyt kupiecki. Uzupełnij bilans po tych operacjach.",
+                    type: "analyze",
+                    content: {
+                        initialBalance: {
+                            assets: [
+                                { name: "A. Aktywa trwałe", value: 400000 },
+                                { name: "I. Wartości niematerialne i prawne", value: 50000 },
+                                { name: "II. Rzeczowe aktywa trwałe", value: 300000 },
+                                { name: "III. Należności długoterminowe", value: 20000 },
+                                { name: "IV. Inwestycje długoterminowe", value: 30000 },
+                                { name: "B. Aktywa obrotowe", value: 200000 },
+                                { name: "I. Zapasy", value: 80000 },
+                                { name: "II. Należności krótkoterminowe", value: 50000 },
+                                { name: "III. Inwestycje krótkoterminowe", value: 70000 }
+                            ],
+                            liabilities: [
+                                { name: "A. Kapitał własny", value: 350000 },
+                                { name: "I. Kapitał zakładowy", value: 200000 },
+                                { name: "II. Kapitał zapasowy", value: 80000 },
+                                { name: "III. Zysk (strata) netto", value: 70000 },
+                                { name: "B. Zobowiązania i rezerwy", value: 250000 },
+                                { name: "I. Rezerwy na zobowiązania", value: 20000 },
+                                { name: "II. Zobowiązania długoterminowe", value: 150000 },
+                                { name: "III. Zobowiązania krótkoterminowe", value: 80000 }
+                            ]
+                        },
+                        fieldsToFill: [
+                            "II. Rzeczowe aktywa trwałe",
+                            "III. Inwestycje krótkoterminowe",
+                            "II. Zobowiązania długoterminowe",
+                            "III. Zobowiązania krótkoterminowe"
+                        ]
+                    },
+                    solution: {
+                        "II. Rzeczowe aktywa trwałe": 450000,
+                        "III. Inwestycje krótkoterminowe": 90000,
+                        "II. Zobowiązania długoterminowe": 250000,
+                        "III. Zobowiązania krótkoterminowe": 150000
+                    },
+                    hint: "Zaciągnięcie kredytu zwiększa zarówno inwestycje krótkoterminowe (środki pieniężne), jak i zobowiązania. Zakup linii produkcyjnej zwiększa rzeczowe aktywa trwałe, zmniejsza środki pieniężne i zwiększa zobowiązania krótkoterminowe.",
+                    explanation: "Zaciągnięcie kredytu bankowego 100 000 zł zwiększa środki pieniężne (do 170 000 zł) i zobowiązania długoterminowe (do 250 000 zł). Zakup linii produkcyjnej zwiększa rzeczowe aktywa trwałe o 150 000 zł (do 450 000 zł), zmniejsza środki pieniężne o 80 000 zł (do 90 000 zł) i zwiększa zobowiązania krótkoterminowe o 70 000 zł (do 150 000 zł).",
+                    points: 4
+                },
+                {
+                    title: "Obliczanie wskaźników - poziom średni",
+                    description: "Na podstawie podanego bilansu, oblicz następujące wskaźniki: udział kapitału własnego w finansowaniu aktywów, udział zobowiązań długoterminowych w pasywach oraz udział aktywów obrotowych w aktywach ogółem. Wyniki podaj w procentach.",
+                    type: "calculate-ratios",
+                    content: {
+                        balance: {
+                            assets: [
+                                { name: "A. Aktywa trwałe", value: 600000 },
+                                { name: "I. Wartości niematerialne i prawne", value: 100000 },
+                                { name: "II. Rzeczowe aktywa trwałe", value: 400000 },
+                                { name: "III. Należności długoterminowe", value: 50000 },
+                                { name: "IV. Inwestycje długoterminowe", value: 50000 },
+                                { name: "B. Aktywa obrotowe", value: 400000 },
+                                { name: "I. Zapasy", value: 150000 },
+                                { name: "II. Należności krótkoterminowe", value: 150000 },
+                                { name: "III. Inwestycje krótkoterminowe", value: 100000 },
+                                { name: "AKTYWA RAZEM", value: 1000000 }
+                            ],
+                            liabilities: [
+                                { name: "A. Kapitał własny", value: 600000 },
+                                { name: "I. Kapitał zakładowy", value: 400000 },
+                                { name: "II. Kapitał zapasowy", value: 100000 },
+                                { name: "III. Zysk (strata) netto", value: 100000 },
+                                { name: "B. Zobowiązania i rezerwy", value: 400000 },
+                                { name: "I. Rezerwy na zobowiązania", value: 50000 },
+                                { name: "II. Zobowiązania długoterminowe", value: 200000 },
+                                { name: "III. Zobowiązania krótkoterminowe", value: 150000 },
+                                { name: "PASYWA RAZEM", value: 1000000 }
+                            ]
+                        },
+                        ratiosToCalculate: [
+                            { name: "Udział kapitału własnego w finansowaniu aktywów", formula: "A. Kapitał własny / AKTYWA RAZEM", value: null, editable: true },
+                            { name: "Udział zobowiązań długoterminowych w pasywach", formula: "II. Zobowiązania długoterminowe / PASYWA RAZEM", value: null, editable: true },
+                            { name: "Udział aktywów obrotowych w aktywach ogółem", formula: "B. Aktywa obrotowe / AKTYWA RAZEM", value: null, editable: true }
+                        ]
+                    },
+                    solution: {
+                        "Udział kapitału własnego w finansowaniu aktywów": 60,
+                        "Udział zobowiązań długoterminowych w pasywach": 20,
+                        "Udział aktywów obrotowych w aktywach ogółem": 40
+                    },
+                    hint: "Aby obliczyć wskaźniki, podziel odpowiednie wartości z bilansu i pomnóż przez 100, aby uzyskać wynik w procentach.",
+                    explanation: "Udział kapitału własnego w finansowaniu aktywów: 600 000 zł / 1 000 000 zł * 100% = 60%. Udział zobowiązań długoterminowych w pasywach: 200 000 zł / 1 000 000 zł * 100% = 20%. Udział aktywów obrotowych w aktywach ogółem: 400 000 zł / 1 000 000 zł * 100% = 40%.",
+                    points: 3
+                }
+            ];
+            
+            // Definicje ćwiczeń dla poziomu trudnego
+            const hardExercises = [
+                {
+                    title: "Analiza kompleksowych zmian - poziom trudny",
+                    description: "Firma przeprowadziła w ciągu miesiąca następujące operacje: 1) zaciągnęła kredyt długoterminowy 200 000 zł, 2) zakupiła środki trwałe za 250 000 zł (150 000 zł z kredytu, 100 000 zł gotówką), 3) spłaciła zobowiązania krótkoterminowe w wysokości 50 000 zł, 4) dokonała emisji akcji o wartości 100 000 zł. Uzupełnij bilans po tych operacjach.",
+                    type: "analyze-complex",
+                    content: {
+                        initialBalance: {
+                            assets: [
+                                { name: "A. Aktywa trwałe", value: 500000 },
+                                { name: "I. Wartości niematerialne i prawne", value: 100000 },
+                                { name: "II. Rzeczowe aktywa trwałe", value: 350000 },
+                                { name: "III. Należności długoterminowe", value: 20000 },
+                                { name: "IV. Inwestycje długoterminowe", value: 30000 },
+                                { name: "B. Aktywa obrotowe", value: 300000 },
+                                { name: "I. Zapasy", value: 100000 },
+                                { name: "II. Należności krótkoterminowe", value: 70000 },
+                                { name: "III. Inwestycje krótkoterminowe", value: 130000 }
+                            ],
+                            liabilities: [
+                                { name: "A. Kapitał własny", value: 450000 },
+                                { name: "I. Kapitał zakładowy", value: 300000 },
+                                { name: "II. Kapitał zapasowy", value: 80000 },
+                                { name: "III. Zysk (strata) netto", value: 70000 },
+                                { name: "B. Zobowiązania i rezerwy", value: 350000 },
+                                { name: "I. Rezerwy na zobowiązania", value: 40000 },
+                                { name: "II. Zobowiązania długoterminowe", value: 160000 },
+                                { name: "III. Zobowiązania krótkoterminowe", value: 150000 }
+                            ]
+                        },
+                        fieldsToFill: [
+                            "II. Rzeczowe aktywa trwałe",
+                            "III. Inwestycje krótkoterminowe",
+                            "I. Kapitał zakładowy",
+                            "II. Zobowiązania długoterminowe",
+                            "III. Zobowiązania krótkoterminowe",
+                            "AKTYWA RAZEM",
+                            "PASYWA RAZEM"
+                        ]
+                    },
+                    solution: {
+                        "II. Rzeczowe aktywa trwałe": 600000,
+                        "III. Inwestycje krótkoterminowe": 80000,
+                        "I. Kapitał zakładowy": 400000,
+                        "II. Zobowiązania długoterminowe": 360000,
+                        "III. Zobowiązania krótkoterminowe": 100000,
+                        "AKTYWA RAZEM": 900000,
+                        "PASYWA RAZEM": 900000
+                    },
+                    hint: "Analizuj każdą operację po kolei i śledź jej wpływ na bilans. Pamiętaj, że suma aktywów zawsze musi być równa sumie pasywów.",
+                    explanation: "1) Zaciągnięcie kredytu: zwiększenie inwestycji krótkoterminowych o 200 000 zł (do 330 000 zł) i zobowiązań długoterminowych o 200 000 zł (do 360 000 zł). 2) Zakup środków trwałych: zwiększenie rzeczowych aktywów trwałych o 250 000 zł (do 600 000 zł) i zmniejszenie inwestycji krótkoterminowych o 100 000 zł (do 230 000 zł). 3) Spłata zobowiązań: zmniejszenie inwestycji krótkoterminowych o 50 000 zł (do 180 000 zł) i zobowiązań krótkoterminowych o 50 000 zł (do 100 000 zł). 4) Emisja akcji: zwiększenie inwestycji krótkoterminowych o 100 000 zł (do 80 000 zł) i kapitału zakładowego o 100 000 zł (do 400 000 zł). Suma aktywów i pasywów wynosi 900 000 zł.",
+                    points: 7
+                },
+                {
+                    title: "Scenariusz biznesowy - poziom trudny",
+                    description: "Twoja firma planuje inwestycję w nową technologię wartą 500 000 zł. Masz do wyboru: finansowanie kredytem bankowym (oprocentowanie 8%) lub emisję akcji. Przeanalizuj oba warianty i oblicz wskaźniki zadłużenia oraz rentowności kapitału własnego (ROE) dla obu scenariuszy, przyjmując zysk netto na poziomie 120 000 zł po inwestycji.",
+                    type: "business-scenario",
+                    content: {
+                        initialBalance: {
+                            assets: [
+                                { name: "A. Aktywa trwałe", value: 800000 },
+                                { name: "I. Wartości niematerialne i prawne", value: 150000 },
+                                { name: "II. Rzeczowe aktywa trwałe", value: 550000 },
+                                { name: "III. Należności długoterminowe", value: 50000 },
+                                { name: "IV. Inwestycje długoterminowe", value: 50000 },
+                                { name: "B. Aktywa obrotowe", value: 500000 },
+                                { name: "I. Zapasy", value: 200000 },
+                                { name: "II. Należności krótkoterminowe", value: 150000 },
+                                { name: "III. Inwestycje krótkoterminowe", value: 150000 },
+                                { name: "AKTYWA RAZEM", value: 1300000 }
+                            ],
+                            liabilities: [
+                                { name: "A. Kapitał własny", value: 800000 },
+                                { name: "I. Kapitał zakładowy", value: 600000 },
+                                { name: "II. Kapitał zapasowy", value: 100000 },
+                                { name: "III. Zysk (strata) netto", value: 100000 },
+                                { name: "B. Zobowiązania i rezerwy", value: 500000 },
+                                { name: "I. Rezerwy na zobowiązania", value: 50000 },
+                                { name: "II. Zobowiązania długoterminowe", value: 300000 },
+                                { name: "III. Zobowiązania krótkoterminowe", value: 150000 },
+                                { name: "PASYWA RAZEM", value: 1300000 }
+                            ]
+                        },
+                        scenarios: [
+                            {
+                                name: "Finansowanie kredytem",
+                                ratios: [
+                                    { name: "Wskaźnik zadłużenia ogółem", formula: "(Zobowiązania ogółem / Pasywa razem) * 100%", value: null, editable: true },
+                                    { name: "Rentowność kapitału własnego (ROE)", formula: "(Zysk netto / Kapitał własny) * 100%", value: null, editable: true }
+                                ]
+                            },
+                            {
+                                name: "Finansowanie emisją akcji",
+                                ratios: [
+                                    { name: "Wskaźnik zadłużenia ogółem", formula: "(Zobowiązania ogółem / Pasywa razem) * 100%", value: null, editable: true },
+                                    { name: "Rentowność kapitału własnego (ROE)", formula: "(Zysk netto / Kapitał własny) * 100%", value: null, editable: true }
+                                ]
+                            }
+                        ]
+                    },
+                    solution: {
+                        "Finansowanie kredytem-Wskaźnik zadłużenia ogółem": 55.6,
+                        "Finansowanie kredytem-Rentowność kapitału własnego (ROE)": 14.3,
+                        "Finansowanie emisją akcji-Wskaźnik zadłużenia ogółem": 27.8,
+                        "Finansowanie emisją akcji-Rentowność kapitału własnego (ROE)": 9.2
+                    },
+                    hint: "Dla scenariusza kredytowego, zmodyfikuj bilans uwzględniając dodatkowe zobowiązanie długoterminowe oraz odsetki od kredytu. Dla emisji akcji, zwiększ kapitał zakładowy. Wskaźnik zadłużenia to stosunek zobowiązań ogółem do pasywów razem, a ROE to stosunek zysku netto do kapitału własnego.",
+                    explanation: "Scenariusz kredytowy: Wzrost aktywów o 500 000 zł (do 1 800 000 zł), wzrost zobowiązań długoterminowych o 500 000 zł (do 800 000 zł). Zysk netto po uwzględnieniu odsetek (8% od 500 000 zł = 40 000 zł): 120 000 zł - 40 000 zł = 80 000 zł. Wskaźnik zadłużenia: (1 000 000 zł / 1 800 000 zł) * 100% = 55.6%. ROE: (80 000 zł / 560 000 zł) * 100% = 14.3%. Scenariusz emisji akcji: Wzrost aktywów o 500 000 zł (do 1 800 000 zł), wzrost kapitału zakładowego o 500 000 zł (do 1 100 000 zł). Wskaźnik zadłużenia: (500 000 zł / 1 800 000 zł) * 100% = 27.8%. ROE: (120 000 zł / 1 300 000 zł) * 100% = 9.2%.",
+                    points: 8
+                },
+                {
+                    title: "Rekonstrukcja bilansu - poziom trudny",
+                    description: "Na podstawie podanych danych, odtwórz kompletny bilans przedsiębiorstwa. Wiadomo, że: suma aktywów wynosi 1 500 000 zł, aktywa trwałe stanowią 60% aktywów ogółem, zapasy stanowią 40% aktywów obrotowych, kapitał własny stanowi 45% pasywów, a stosunek zobowiązań długoterminowych do krótkoterminowych wynosi 2:1.",
+                    type: "reconstruct",
+                    content: {
+                        fieldsToFill: [
+                            { name: "A. Aktywa trwałe", value: null, editable: true },
+                            { name: "B. Aktywa obrotowe", value: null, editable: true },
+                            { name: "I. Zapasy", value: null, editable: true },
+                            { name: "II. Należności i inne aktywa obrotowe", value: null, editable: true },
+                            { name: "AKTYWA RAZEM", value: 1500000, editable: false },
+                            { name: "A. Kapitał własny", value: null, editable: true },
+                            { name: "B. Zobowiązania i rezerwy", value: null, editable: true },
+                            { name: "I. Zobowiązania długoterminowe", value: null, editable: true },
+                            { name: "II. Zobowiązania krótkoterminowe", value: null, editable: true },
+                            { name: "PASYWA RAZEM", value: 1500000, editable: false }
+                        ]
+                    },
+                    solution: {
+                        "A. Aktywa trwałe": 900000,
+                        "B. Aktywa obrotowe": 600000,
+                        "I. Zapasy": 240000,
+                        "II. Należności i inne aktywa obrotowe": 360000,
+                        "A. Kapitał własny": 675000,
+                        "B. Zobowiązania i rezerwy": 825000,
+                        "I. Zobowiązania długoterminowe": 550000,
+                        "II. Zobowiązania krótkoterminowe": 275000
+                    },
+                    hint: "Zacznij od obliczenia aktywów trwałych (60% z 1 500 000 zł), następnie oblicz aktywa obrotowe jako różnicę między aktywami razem a aktywami trwałymi. Oblicz zapasy jako 40% aktywów obrotowych. Po stronie pasywów, oblicz kapitał własny (45% z 1 500 000 zł) i zobowiązania ogółem. Podziel zobowiązania w proporcji 2:1 (długoterminowe:krótkoterminowe).",
+                    explanation: "Aktywa trwałe: 60% * 1 500 000 zł = 900 000 zł. Aktywa obrotowe: 1 500 000 zł - 900 000 zł = 600 000 zł. Zapasy: 40% * 600 000 zł = 240 000 zł. Należności i inne aktywa obrotowe: 600 000 zł - 240 000 zł = 360 000 zł. Kapitał własny: 45% * 1 500 000 zł = 675 000 zł. Zobowiązania i rezerwy: 1 500 000 zł - 675 000 zł = 825 000 zł. Proporcja zobowiązań długoterminowych do krótkoterminowych 2:1 oznacza, że zobowiązania długoterminowe to 2/3 * 825 000 zł = 550 000 zł, a krótkoterminowe to 1/3 * 825 000 zł = 275 000 zł.",
+                    points: 8
+                }
+            ];
+            
+            // Zmienne globalne
+            let currentExercises = [];
+            let currentExerciseIndex = 0;
+            let userScore = 0;
+            let totalPoints = 0;
+            let currentDifficulty = 'easy';
+            let timerInterval;
+            let startTime;
+            
+            // Funkcja inicjalizująca ćwiczenie
+            function initPractice(difficulty) {
+                // Ustaw aktualne ćwiczenia na podstawie wybranego poziomu trudności
+                if (difficulty === 'easy') {
+                    currentExercises = [...easyExercises];
+                } else if (difficulty === 'medium') {
+                    currentExercises = [...mediumExercises];
+                } else if (difficulty === 'hard') {
+                    currentExercises = [...hardExercises];
+                }
+                
+                // Losowe mieszanie ćwiczeń
+                currentExercises.sort(() => Math.random() - 0.5);
+                
+                // Resetowanie zmiennych
+                currentExerciseIndex = 0;
+                userScore = 0;
+                totalPoints = 0;
+                
+                // Obliczanie całkowitej liczby punktów
+                currentExercises.forEach(exercise => {
+                    totalPoints += exercise.points;
+                });
+                
+                // Aktualizacja wyświetlania
+                totalPointsDisplay.textContent = totalPoints;
+                scoreDisplay.textContent = userScore;
+                
+                // Uruchomienie timera
+                startTimer();
+                
+                // Wyświetlenie pierwszego ćwiczenia
+                showExercise(currentExerciseIndex);
+                
+                // Aktualizacja wyboru trudności
+                difficultySelect.value = difficulty;
+                currentDifficulty = difficulty;
+                
+                // Pokazanie sekcji ćwiczenia i ukrycie innych sekcji
+                introSection.classList.add('hidden');
+                resultsSection.classList.add('hidden');
+                navigationSection.classList.add('hidden');
+                practiceSection.classList.remove('hidden');
+                explanationContainer.classList.add('hidden');
+            }
+            
+            // Funkcja uruchamiająca timer
+            function startTimer() {
+                // Zatrzymanie poprzedniego timera, jeśli istnieje
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                }
+                
+                // Ustawienie czasu rozpoczęcia
+                startTime = new Date();
+                
+                // Aktualizacja wyświetlania timera co sekundę
+                timerInterval = setInterval(function() {
+                    const currentTime = new Date();
+                    const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+                    const minutes = Math.floor(elapsedTime / 60);
+                    const seconds = elapsedTime % 60;
+                    timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            }
+            
+            // Funkcja zatrzymująca timer
+            function stopTimer() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+            }
+            
+            // Funkcja wyświetlająca ćwiczenie
+            function showExercise(index) {
+                // Pobranie aktualnego ćwiczenia
+                const exercise = currentExercises[index];
+                
+                // Aktualizacja tytułu i opisu ćwiczenia
+                exerciseTitle.textContent = exercise.title;
+                exerciseDescription.textContent = exercise.description;
+                
+                // Wyczyszczenie kontenera ćwiczenia
+                exerciseContent.innerHTML = '';
+                
+                // Generowanie zawartości ćwiczenia w zależności od typu
+                if (exercise.type === 'fill' || exercise.type === 'calculate') {
+                    showTableExercise(exercise);
+                } else if (exercise.type === 'analyze' || exercise.type === 'analyze-complex') {
+                    showAnalyzeExercise(exercise);
+                } else if (exercise.type === 'calculate-ratios') {
+                    showRatiosExercise(exercise);
+                } else if (exercise.type === 'business-scenario') {
+                    showScenarioExercise(exercise);
+                } else if (exercise.type === 'reconstruct') {
+                    showReconstructExercise(exercise);
+                }
+                
+                // Resetowanie przycisku sprawdzania
+                checkBtn.disabled = false;
+                
+                // Ukrycie kontenera wyjaśnienia
+                explanationContainer.classList.add('hidden');
+            }
+            
+            // Funkcja wyświetlająca ćwiczenie typu tabela (fill, calculate)
+            function showTableExercise(exercise) {
+                // Tworzenie tabeli bilansu
+                const table = document.createElement('table');
+                table.className = 'bilans-table';
+                
+                // Nagłówek tabeli
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                const assetHeader = document.createElement('th');
+                assetHeader.textContent = 'Pozycja';
+                headerRow.appendChild(assetHeader);
+                
+                const assetValueHeader = document.createElement('th');
+                assetValueHeader.textContent = 'Wartość (zł)';
+                headerRow.appendChild(assetValueHeader);
+                
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Ciało tabeli
+                const tbody = document.createElement('tbody');
+                
+                // Dodanie aktywów
+                if (exercise.content.assets) {
+                    exercise.content.assets.forEach(item => {
+                        const row = document.createElement('tr');
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = item.name.startsWith('A.') || item.name.startsWith('B.') ? 'category-cell' : '';
+                        nameCell.textContent = item.name;
+                        row.appendChild(nameCell);
+                        
+                        const valueCell = document.createElement('td');
+                        if (item.editable) {
+                            const input = document.createElement('input');
+                            input.type = 'number';
+                            input.className = 'input-field';
+                            input.placeholder = 'Wpisz wartość';
+                            input.setAttribute('data-field', item.name);
+                            valueCell.appendChild(input);
+                        } else if (item.value !== null) {
+                            valueCell.textContent = item.value.toLocaleString();
+                        } else {
+                            valueCell.textContent = '-';
+                        }
+                        row.appendChild(valueCell);
+                        
+                        tbody.appendChild(row);
+                    });
+                }
+                
+                // Dodanie pasywów, jeśli istnieją
+                if (exercise.content.liabilities) {
+                    const separatorRow = document.createElement('tr');
+                    const separatorCell = document.createElement('td');
+                    separatorCell.colSpan = 2;
+                    separatorCell.style.height = '20px';
+                    separatorRow.appendChild(separatorCell);
+                    tbody.appendChild(separatorRow);
+                    
+                    exercise.content.liabilities.forEach(item => {
+                        const row = document.createElement('tr');
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = item.name.startsWith('A.') || item.name.startsWith('B.') ? 'category-cell' : '';
+                        nameCell.textContent = item.name;
+                        row.appendChild(nameCell);
+                        
+                        const valueCell = document.createElement('td');
+                        if (item.editable) {
+                            const input = document.createElement('input');
+                            input.type = 'number';
+                            input.className = 'input-field';
+                            input.placeholder = 'Wpisz wartość';
+                            input.setAttribute('data-field', item.name);
+                            valueCell.appendChild(input);
+                        } else if (item.value !== null) {
+                            valueCell.textContent = item.value.toLocaleString();
+                        } else {
+                            valueCell.textContent = '-';
+                        }
+                        row.appendChild(valueCell);
+                        
+                        tbody.appendChild(row);
+                    });
+                }
+                
+                table.appendChild(tbody);
+                exerciseContent.appendChild(table);
+            }
+            
+            // Funkcja wyświetlająca ćwiczenie typu analiza (analyze, analyze-complex)
+            function showAnalyzeExercise(exercise) {
+                const container = document.createElement('div');
+                
+                // Nagłówek dla bilansu początkowego
+                const initialBalanceHeader = document.createElement('h4');
+                initialBalanceHeader.className = 'text-lg text-pink-600 font-semibold mb-4';
+                initialBalanceHeader.textContent = 'Bilans początkowy:';
+                container.appendChild(initialBalanceHeader);
+                
+                // Tworzenie tabeli bilansu początkowego
+                const initialTable = document.createElement('table');
+                initialTable.className = 'bilans-table mb-6';
+                
+                // Nagłówek tabeli
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                const assetHeader = document.createElement('th');
+                assetHeader.textContent = 'Aktywa';
+                assetHeader.style.width = '25%';
+                headerRow.appendChild(assetHeader);
+                
+                const assetValueHeader = document.createElement('th');
+                assetValueHeader.textContent = 'Wartość (zł)';
+                assetValueHeader.style.width = '25%';
+                headerRow.appendChild(assetValueHeader);
+                
+                const liabilityHeader = document.createElement('th');
+                liabilityHeader.textContent = 'Pasywa';
+                liabilityHeader.style.width = '25%';
+                headerRow.appendChild(liabilityHeader);
+                
+                const liabilityValueHeader = document.createElement('th');
+                liabilityValueHeader.textContent = 'Wartość (zł)';
+                liabilityValueHeader.style.width = '25%';
+                headerRow.appendChild(liabilityValueHeader);
+                
+                thead.appendChild(headerRow);
+                initialTable.appendChild(thead);
+                
+                // Ciało tabeli
+                const tbody = document.createElement('tbody');
+                
+                // Określenie maksymalnej liczby wierszy w tabeli
+                const maxRows = Math.max(
+                    exercise.content.initialBalance.assets.length,
+                    exercise.content.initialBalance.liabilities.length
+                );
+                
+                // Wypełnienie tabeli
+                for (let i = 0; i < maxRows; i++) {
+                    const row = document.createElement('tr');
+                    
+                    // Aktywa
+                    if (i < exercise.content.initialBalance.assets.length) {
+                        const asset = exercise.content.initialBalance.assets[i];
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = asset.name.startsWith('A.') || asset.name.startsWith('B.') ? 'category-cell' : '';
+                        nameCell.textContent = asset.name;
+                        row.appendChild(nameCell);
+                        
+                        const valueCell = document.createElement('td');
+                        valueCell.textContent = asset.value.toLocaleString();
+                        row.appendChild(valueCell);
+                    } else {
+                        row.appendChild(document.createElement('td'));
+                        row.appendChild(document.createElement('td'));
+                    }
+                    
+                    // Pasywa
+                    if (i < exercise.content.initialBalance.liabilities.length) {
+                        const liability = exercise.content.initialBalance.liabilities[i];
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = liability.name.startsWith('A.') || liability.name.startsWith('B.') ? 'category-cell' : '';
+                        nameCell.textContent = liability.name;
+                        row.appendChild(nameCell);
+                        
+                        const valueCell = document.createElement('td');
+                        valueCell.textContent = liability.value.toLocaleString();
+                        row.appendChild(valueCell);
+                    } else {
+                        row.appendChild(document.createElement('td'));
+                        row.appendChild(document.createElement('td'));
+                    }
+                    
+                    tbody.appendChild(row);
+                }
+                
+                initialTable.appendChild(tbody);
+                container.appendChild(initialTable);
+                
+                // Nagłówek dla pól do wypełnienia
+                const fillHeader = document.createElement('h4');
+                fillHeader.className = 'text-lg text-pink-600 font-semibold mb-4';
+                fillHeader.textContent = 'Uzupełnij brakujące wartości po operacjach:';
+                container.appendChild(fillHeader);
+                
+                // Formularze do wypełnienia
+                const formContainer = document.createElement('div');
+                formContainer.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 mb-4';
+                
+                exercise.content.fieldsToFill.forEach(field => {
+                    const fieldContainer = document.createElement('div');
+                    fieldContainer.className = 'mb-4';
+                    
+                    const label = document.createElement('label');
+                    label.className = 'block text-gray-700 mb-2';
+                    label.textContent = field;
+                    fieldContainer.appendChild(label);
+                    
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'input-field';
+                    input.placeholder = 'Wpisz wartość';
+                    input.setAttribute('data-field', field);
+                    fieldContainer.appendChild(input);
+                    
+                    formContainer.appendChild(fieldContainer);
+                });
+                
+                container.appendChild(formContainer);
+                exerciseContent.appendChild(container);
+            }
+            
+            // Funkcja wyświetlająca ćwiczenie typu wskaźniki (calculate-ratios)
+            function showRatiosExercise(exercise) {
+                const container = document.createElement('div');
+                
+                // Nagłówek dla bilansu
+                const balanceHeader = document.createElement('h4');
+                balanceHeader.className = 'text-lg text-pink-600 font-semibold mb-4';
+                balanceHeader.textContent = 'Bilans:';
+                container.appendChild(balanceHeader);
+                
+                // Tworzenie tabeli bilansu
+                const balanceTable = document.createElement('table');
+                balanceTable.className = 'bilans-table mb-6';
+                
+                // Nagłówek tabeli
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                const assetHeader = document.createElement('th');
+                assetHeader.textContent = 'Aktywa';
+                assetHeader.style.width = '25%';
+                headerRow.appendChild(assetHeader);
+                
+                const assetValueHeader = document.createElement('th');
+                assetValueHeader.textContent = 'Wartość (zł)';
+                assetValueHeader.style.width = '25%';
+                headerRow.appendChild(assetValueHeader);
+                
+                const liabilityHeader = document.createElement('th');
+                liabilityHeader.textContent = 'Pasywa';
+                liabilityHeader.style.width = '25%';
+                headerRow.appendChild(liabilityHeader);
+                
+                const liabilityValueHeader = document.createElement('th');
+                liabilityValueHeader.textContent = 'Wartość (zł)';
+                liabilityValueHeader.style.width = '25%';
+                headerRow.appendChild(liabilityValueHeader);
+                
+                thead.appendChild(headerRow);
+                balanceTable.appendChild(thead);
+                
+                // Ciało tabeli
+                const tbody = document.createElement('tbody');
+                
+                // Określenie maksymalnej liczby wierszy w tabeli
+                const maxRows = Math.max(
+                    exercise.content.balance.assets.length,
+                    exercise.content.balance.liabilities.length
+                );
+                
+                // Wypełnienie tabeli
+                for (let i = 0; i < maxRows; i++) {
+                    const row = document.createElement('tr');
+                    
+                    // Aktywa
+                    if (i < exercise.content.balance.assets.length) {
+                        const asset = exercise.content.balance.assets[i];
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = asset.name.startsWith('A.') || asset.name.startsWith('B.') ? 'category-cell' : '';
+                        nameCell.textContent = asset.name;
+                        row.appendChild(nameCell);
+                        
+                        const valueCell = document.createElement('td');
+                        valueCell.textContent = asset.value.toLocaleString();
+                        row.appendChild(valueCell);
+                    } else {
+                        row.appendChild(document.createElement('td'));
+                        row.appendChild(document.createElement('td'));
+                    }
+                    
+                    // Pasywa
+                    if (i < exercise.content.balance.liabilities.length) {
+                        const liability = exercise.content.balance.liabilities[i];
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = liability.name.startsWith('A.') || liability.name.startsWith('B.') ? 'category-cell' : '';
+                        nameCell.textContent = liability.name;
+                        row.appendChild(nameCell);
+                        
+                        const valueCell = document.createElement('td');
+                        valueCell.textContent = liability.value.toLocaleString();
+                        row.appendChild(valueCell);
+                    } else {
+                        row.appendChild(document.createElement('td'));
+                        row.appendChild(document.createElement('td'));
+                    }
+                    
+                    tbody.appendChild(row);
+                }
+                
+                balanceTable.appendChild(tbody);
+                container.appendChild(balanceTable);
+                
+                // Nagłówek dla wskaźników
+                const ratiosHeader = document.createElement('h4');
+                ratiosHeader.className = 'text-lg text-pink-600 font-semibold mb-4';
+                ratiosHeader.textContent = 'Oblicz wskaźniki (w %):';
+                container.appendChild(ratiosHeader);
+                
+                // Formularze do wypełnienia wskaźników
+                const formContainer = document.createElement('div');
+                formContainer.className = 'space-y-4';
+                
+                exercise.content.ratiosToCalculate.forEach(ratio => {
+                    const ratioContainer = document.createElement('div');
+                    ratioContainer.className = 'bg-pink-50 p-4 rounded-xl';
+                    
+                    const label = document.createElement('label');
+                    label.className = 'block text-gray-700 mb-2 font-semibold';
+                    label.textContent = ratio.name;
+                    ratioContainer.appendChild(label);
+                    
+                    const formula = document.createElement('p');
+                    formula.className = 'text-sm text-gray-600 mb-3';
+                    formula.textContent = `Wzór: ${ratio.formula}`;
+                    ratioContainer.appendChild(formula);
+                    
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.className = 'input-field';
+                    input.placeholder = 'Wpisz wartość (%)';
+                    input.setAttribute('data-field', ratio.name);
+                    input.min = 0;
+                    input.max = 100;
+                    input.step = 0.1;
+                    ratioContainer.appendChild(input);
+                    
+                    formContainer.appendChild(ratioContainer);
+                });
+                
+                container.appendChild(formContainer);
+                exerciseContent.appendChild(container);
+            }
+            
+            // Funkcja wyświetlająca ćwiczenie typu scenariusz biznesowy (business-scenario)
+            function showScenarioExercise(exercise) {
+                const container = document.createElement('div');
+                
+                // Nagłówek dla bilansu początkowego
+                const initialBalanceHeader = document.createElement('h4');
+                initialBalanceHeader.className = 'text-lg text-pink-600 font-semibold mb-4';
+                initialBalanceHeader.textContent = 'Bilans początkowy:';
+                container.appendChild(initialBalanceHeader);
+                
+                // Tworzenie tabeli bilansu początkowego
+                const initialTable = document.createElement('table');
+                initialTable.className = 'bilans-table mb-6';
+                
+                // Nagłówek tabeli
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                const assetHeader = document.createElement('th');
+                assetHeader.textContent = 'Aktywa';
+                assetHeader.style.width = '25%';
+                headerRow.appendChild(assetHeader);
+                
+                const assetValueHeader = document.createElement('th');
+                assetValueHeader.textContent = 'Wartość (zł)';
+                assetValueHeader.style.width = '25%';
+                headerRow.appendChild(assetValueHeader);
+                
+                const liabilityHeader = document.createElement('th');
+                liabilityHeader.textContent = 'Pasywa';
+                liabilityHeader.style.width = '25%';
+                headerRow.appendChild(liabilityHeader);
+                
+                const liabilityValueHeader = document.createElement('th');
+                liabilityValueHeader.textContent = 'Wartość (zł)';
+                liabilityValueHeader.style.width = '25%';
+                headerRow.appendChild(liabilityValueHeader);
+                
+                thead.appendChild(headerRow);
+                initialTable.appendChild(thead);
+                
+                // Ciało tabeli
+                const tbody = document.createElement('tbody');
+                
+                // Określenie maksymalnej liczby wierszy w tabeli
+                const maxRows = Math.max(
+                    exercise.content.initialBalance.assets.length,
+                    exercise.content.initialBalance.liabilities.length
+                );
+                
+                // Wypełnienie tabeli
+                for (let i = 0; i < maxRows; i++) {
+                    const row = document.createElement('tr');
+                    
+                    // Aktywa
+                    if (i < exercise.content.initialBalance.assets.length) {
+                        const asset = exercise.content.initialBalance.assets[i];
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = asset.name.startsWith('A.') || asset.name.startsWith('B.') ? 'category-cell' : '';
+                        nameCell.textContent = asset.name;
+                        row.appendChild(nameCell);
+                        
+                        const valueCell = document.createElement('td');
+                        valueCell.textContent = asset.value.toLocaleString();
+                        row.appendChild(valueCell);
+                    } else {
+                        row.appendChild(document.createElement('td'));
+                        row.appendChild(document.createElement('td'));
+                    }
+                    
+                    // Pasywa
+                    if (i < exercise.content.initialBalance.liabilities.length) {
+                        const liability = exercise.content.initialBalance.liabilities[i];
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = liability.name.startsWith('A.') || liability.name.startsWith('B.') ? 'category-cell' : '';
+                        nameCell.textContent = liability.name;
+                        row.appendChild(nameCell);
+                        
+                        const valueCell = document.createElement('td');
+                        valueCell.textContent = liability.value.toLocaleString();
+                        row.appendChild(valueCell);
+                    } else {
+                        row.appendChild(document.createElement('td'));
+                        row.appendChild(document.createElement('td'));
+                    }
+                    
+                    tbody.appendChild(row);
+                }
+                
+                initialTable.appendChild(tbody);
+                container.appendChild(initialTable);
+                
+                // Wyświetlanie scenariuszy
+                exercise.content.scenarios.forEach((scenario, index) => {
+                    const scenarioHeader = document.createElement('h4');
+                    scenarioHeader.className = 'text-lg text-pink-600 font-semibold mb-4 mt-6';
+                    scenarioHeader.textContent = `Scenariusz ${index + 1}: ${scenario.name}`;
+                    container.appendChild(scenarioHeader);
+                    
+                    // Formularze do wypełnienia wskaźników
+                    const formContainer = document.createElement('div');
+                    formContainer.className = 'space-y-4';
+                    
+                    scenario.ratios.forEach(ratio => {
+                        const ratioContainer = document.createElement('div');
+                        ratioContainer.className = 'bg-pink-50 p-4 rounded-xl';
+                        
+                        const label = document.createElement('label');
+                        label.className = 'block text-gray-700 mb-2 font-semibold';
+                        label.textContent = ratio.name;
+                        ratioContainer.appendChild(label);
+                        
+                        const formula = document.createElement('p');
+                        formula.className = 'text-sm text-gray-600 mb-3';
+                        formula.textContent = `Wzór: ${ratio.formula}`;
+                        ratioContainer.appendChild(formula);
+                        
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.className = 'input-field';
+                        input.placeholder = 'Wpisz wartość (%)';
+                        input.setAttribute('data-field', `${scenario.name}-${ratio.name}`);
+                        input.min = 0;
+                        input.max = 100;
+                        input.step = 0.1;
+                        ratioContainer.appendChild(input);
+                        
+                        formContainer.appendChild(ratioContainer);
+                    });
+                    
+                    container.appendChild(formContainer);
+                });
+                
+                exerciseContent.appendChild(container);
+            }
+            
+            // Funkcja wyświetlająca ćwiczenie typu rekonstrukcja bilansu (reconstruct)
+            function showReconstructExercise(exercise) {
+                const container = document.createElement('div');
+                
+                const instruction = document.createElement('p');
+                instruction.className = 'text-gray-700 mb-6';
+                instruction.textContent = 'Uzupełnij wartości w bilansie na podstawie podanych informacji:';
+                container.appendChild(instruction);
+                
+                // Tworzenie tabeli bilansu
+                const table = document.createElement('table');
+                table.className = 'bilans-table';
+                
+                // Nagłówek tabeli
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                const positionHeader = document.createElement('th');
+                positionHeader.textContent = 'Pozycja';
+                headerRow.appendChild(positionHeader);
+                
+                const valueHeader = document.createElement('th');
+                valueHeader.textContent = 'Wartość (zł)';
+                headerRow.appendChild(valueHeader);
+                
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Ciało tabeli
+                const tbody = document.createElement('tbody');
+                
+                // Wypełnienie tabeli
+                exercise.content.fieldsToFill.forEach(field => {
+                    const row = document.createElement('tr');
+                    
+                    const nameCell = document.createElement('td');
+                    nameCell.className = field.name.startsWith('A.') || field.name.startsWith('B.') ? 'category-cell' : '';
+                    nameCell.textContent = field.name;
+                    row.appendChild(nameCell);
+                    
+                    const valueCell = document.createElement('td');
+                    if (field.editable) {
+                        const input = document.createElement('input');
+                        input.type = 'number';
+                        input.className = 'input-field';
+                        input.placeholder = 'Wpisz wartość';
+                        input.setAttribute('data-field', field.name);
+                        valueCell.appendChild(input);
+                    } else {
+                        valueCell.textContent = field.value.toLocaleString();
+                    }
+                    row.appendChild(valueCell);
+                    
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(tbody);
+                container.appendChild(table);
+                
+                exerciseContent.appendChild(container);
+            }
+            
+            // Funkcja sprawdzająca odpowiedzi
+            function checkAnswers() {
+                const exercise = currentExercises[currentExerciseIndex];
+                const inputs = document.querySelectorAll('.input-field');
+                let allCorrect = true;
+                let correctCount = 0;
+                
+                inputs.forEach(input => {
+                    const fieldName = input.getAttribute('data-field');
+                    const userValue = parseFloat(input.value);
+                    
+                    if (isNaN(userValue)) {
+                        input.classList.add('incorrect');
+                        allCorrect = false;
+                        return;
+                    }
+                    
+                    if (exercise.solution[fieldName] !== undefined) {
+                        const correctValue = exercise.solution[fieldName];
+                        const tolerance = 0.1; // Tolerancja błędu dla wartości procentowych
+                        
+                        if (Math.abs(userValue - correctValue) <= tolerance) {
+                            input.classList.add('correct');
+                            correctCount++;
+                        } else {
+                            input.classList.add('incorrect');
+                            allCorrect = false;
+                        }
+                    }
+                });
+                
+                // Aktualizacja wyniku
+                if (allCorrect) {
+                    userScore += exercise.points;
+                    scoreDisplay.textContent = userScore;
+                }
+                
+                // Wyświetlenie wyjaśnienia
+                explanationText.textContent = exercise.explanation;
+                explanationContainer.classList.remove('hidden');
+                
+                // Dezaktywacja przycisku sprawdzania
+                checkBtn.disabled = true;
+            }
+            
+            // Funkcja pokazująca podpowiedź
+            function showHint() {
+                const exercise = currentExercises[currentExerciseIndex];
+                alert(exercise.hint);
+            }
+            
+            // Funkcja resetująca ćwiczenie
+            function resetExercise() {
+                const inputs = document.querySelectorAll('.input-field');
+                
+                inputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('correct', 'incorrect');
+                });
+                
+                explanationContainer.classList.add('hidden');
+                checkBtn.disabled = false;
+            }
+            
+            // Funkcja przejścia do następnego ćwiczenia
+            function nextExercise() {
+                currentExerciseIndex++;
+                
+                if (currentExerciseIndex < currentExercises.length) {
+                    showExercise(currentExerciseIndex);
+                } else {
+                    showResults();
+                }
+            }
+            
+            // Funkcja wyświetlająca wyniki
+            function showResults() {
+                // Zatrzymanie timera
+                stopTimer();
+                
+                // Ukrycie kontenera ćwiczenia i pokazanie wyników
+                practiceSection.classList.add('hidden');
+                resultsSection.classList.remove('hidden');
+                
+                // Aktualizacja wyników
+                finalScore.textContent = userScore;
+                const percent = Math.round((userScore / totalPoints) * 100);
+                finalPercent.textContent = `${percent}%`;
+                finalTime.textContent = timerDisplay.textContent;
+                
+                // Wiadomość wynikowa
+                let message = '';
+                if (percent >= 90) {
+                    message = 'Świetny wynik! Doskonale rozumiesz zasady bilansu i potrafisz je zastosować w praktyce.';
+                } else if (percent >= 70) {
+                    message = 'Dobry wynik! Masz solidną wiedzę o bilansie, ale możesz jeszcze popracować nad niektórymi aspektami.';
+                } else if (percent >= 50) {
+                    message = 'Przyzwoity wynik. Warto powtórzyć niektóre zagadnienia z bilansu, aby lepiej zrozumieć ich praktyczne zastosowanie.';
+                } else {
+                    message = 'Warto poświęcić więcej czasu na naukę bilansu. Zacznij od podstaw i stopniowo przejdź do bardziej zaawansowanych zagadnień.';
+                }
+                
+                resultMessage.textContent = message;
+            }
+            
+            // Obsługa przycisków
+            startEasyBtn.addEventListener('click', function() {
+                initPractice('easy');
+            });
+            
+            startMediumBtn.addEventListener('click', function() {
+                initPractice('medium');
+            });
+            
+            startHardBtn.addEventListener('click', function() {
+                initPractice('hard');
+            });
+            
+            checkBtn.addEventListener('click', function() {
+                checkAnswers();
+            });
+            
+            hintBtn.addEventListener('click', function() {
+                showHint();
+            });
+            
+            resetBtn.addEventListener('click', function() {
+                resetExercise();
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                nextExercise();
+            });
+            
+            restartPracticeBtn.addEventListener('click', function() {
+                initPractice(currentDifficulty);
+            });
+            
+            switchLevelBtn.addEventListener('click', function() {
+                introSection.classList.remove('hidden');
+                resultsSection.classList.add('hidden');
+                navigationSection.classList.remove('hidden');
+            });
+            
+            difficultySelect.addEventListener('change', function() {
+                initPractice(this.value);
+            });
+        });
+        </script>
