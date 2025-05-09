@@ -55,12 +55,13 @@
             box-shadow: 0 8px 15px rgba(255, 102, 179, 0.3);
         }
         .drop-zone {
-            min-height: 150px;
+            min-height: 60px;
             border: 2px dashed #ffcce6;
             border-radius: 12px;
             background-color: rgba(255, 242, 246, 0.5);
             transition: all 0.2s;
             padding: 1rem;
+            margin-bottom: 0.5rem;
         }
         .drop-zone.highlight {
             background-color: rgba(255, 204, 230, 0.3);
@@ -70,7 +71,7 @@
             color: #ff80bf;
             text-align: center;
             font-weight: 600;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         .feedback-correct {
             background-color: rgba(167, 243, 208, 0.3);
@@ -91,13 +92,71 @@
             border-radius: 50px;
             box-shadow: 0 4px 6px rgba(255, 153, 204, 0.2);
         }
+        .bilans-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .bilans-table th, .bilans-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem;
+        }
+        .bilans-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            text-align: center;
+        }
+        .bilans-cell {
+            background-color: rgba(255, 242, 246, 0.5);
+            min-height: 60px;
+            border-radius: 8px;
+        }
+        .category-header {
+            background-color: #f0f9ff;
+            color: #0369a1;
+            font-weight: 600;
+        }
+        .subcategory-header {
+            background-color: #f0f9ff;
+            color: #0369a1;
+            padding-left: 1rem;
+            font-weight: 500;
+        }
+        .detail-item {
+            padding-left: 2rem;
+            color: #475569;
+        }
+        .mode-selector {
+            margin-bottom: 1.5rem;
+        }
+        .mode-btn {
+            background-color: white;
+            color: #64748b;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .mode-btn:hover {
+            border-color: #ff80bf;
+            color: #ff66b3;
+        }
+        .mode-btn.active {
+            background-color: #ff80bf;
+            color: white;
+            border-color: #ff80bf;
+        }
         @media (max-width: 768px) {
             .drag-item {
                 margin-bottom: 0.75rem;
             }
             .drop-zone {
-                min-height: 120px;
-                margin-bottom: 1.5rem;
+                min-height: 60px;
+                margin-bottom: 1rem;
+            }
+            .bilans-table {
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -131,11 +190,11 @@
     <!-- Główna zawartość -->
     <main class="container mx-auto px-4 py-8">
         <!-- Wprowadzenie -->
-        <section class="mb-12">
+        <section class="mb-10">
             <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
                 <h2 class="text-2xl md:text-3xl text-purple-600 text-center mb-6">Ćwiczenia z dopasowania</h2>
                 <p class="mb-4 text-gray-700">
-                    W tym trybie ćwiczymy przyporządkowanie konkretnych pozycji do właściwych kategorii bilansu. Przeciągnij elementy z prawej kolumny i upuść je w odpowiedniej kategorii po lewej stronie.
+                    W tym trybie ćwiczymy przyporządkowanie konkretnych pozycji do właściwych kategorii bilansu. Przeciągnij elementy z prawej kolumny i upuść je w odpowiedniej kategorii.
                 </p>
                 <p class="mb-4 text-gray-700">
                     Po umieszczeniu wszystkich elementów, kliknij przycisk "Sprawdź odpowiedzi", aby zobaczyć, które pozycje zostały prawidłowo przyporządkowane.
@@ -143,6 +202,18 @@
                 <p class="text-gray-700">
                     Po sprawdzeniu możesz zresetować ćwiczenie, klikając przycisk "Nowe elementy", aby wylosować nowy zestaw pozycji bilansu z dużej puli.
                 </p>
+            </div>
+        </section>
+
+        <!-- Wybór trybu -->
+        <section class="mb-8 mode-selector text-center">
+            <div class="inline-flex rounded-md shadow-sm">
+                <button id="basic-mode-btn" class="mode-btn active rounded-l-lg">
+                    Tryb podstawowy
+                </button>
+                <button id="advanced-mode-btn" class="mode-btn rounded-r-lg">
+                    Tryb zaawansowany
+                </button>
             </div>
         </section>
 
@@ -176,10 +247,10 @@
             </div>
         </section>
 
-        <!-- Ćwiczenie -->
-        <section class="mb-12">
+        <!-- Ćwiczenie - Tryb Podstawowy -->
+        <section id="basic-mode-section" class="mb-12">
             <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
-                <h3 class="text-xl text-purple-600 mb-6" id="exercise-title">Ćwiczenie: Dopasuj elementy bilansu</h3>
+                <h3 class="text-xl text-purple-600 mb-6" id="exercise-title-basic">Ćwiczenie: Dopasuj elementy bilansu</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Kategorie docelowe -->
@@ -206,18 +277,232 @@
                     <!-- Elementy do przeciągnięcia -->
                     <div>
                         <h4 class="text-lg text-purple-600 mb-4">Elementy do przyporządkowania:</h4>
-                        <div id="items-container">
+                        <div id="items-container-basic">
                             <!-- Elementy będą dodawane przez JavaScript -->
                         </div>
                     </div>
                 </div>
                 
                 <div class="mt-8 flex flex-wrap justify-center gap-4">
-                    <button id="check-btn" class="btn-kawaii bg-gradient-to-r from-green-400 to-green-500">
+                    <button id="check-btn-basic" class="btn-kawaii bg-gradient-to-r from-green-400 to-green-500">
                         <i class="fas fa-check mr-2"></i> Sprawdź odpowiedzi
                     </button>
                     
-                    <button id="reset-btn" class="btn-kawaii bg-gradient-to-r from-blue-400 to-blue-500">
+                    <button id="reset-btn-basic" class="btn-kawaii bg-gradient-to-r from-blue-400 to-blue-500">
+                        <i class="fas fa-redo mr-2"></i> Nowe elementy
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ćwiczenie - Tryb Zaawansowany -->
+        <section id="advanced-mode-section" class="mb-12 hidden">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
+                <h3 class="text-xl text-purple-600 mb-6" id="exercise-title-advanced">Ćwiczenie zaawansowane: Dopasuj elementy bilansu</h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Struktura bilansu z obszarami do upuszczania -->
+                    <div class="overflow-x-auto">
+                        <h4 class="text-lg text-purple-600 mb-4">Struktura bilansu:</h4>
+                        
+                        <table class="bilans-table mb-4">
+                            <thead>
+                                <tr>
+                                    <th class="w-8">Lp.</th>
+                                    <th>Aktywa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center font-semibold">A.</td>
+                                    <td class="category-header">Aktywa trwałe</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">I.</td>
+                                    <td class="subcategory-header">Wartości niematerialne i prawne
+                                        <div id="drop-a-i" class="drop-zone mt-2" data-category="wartosci-niematerialne">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">II.</td>
+                                    <td class="subcategory-header">Rzeczowe aktywa trwałe
+                                        <div id="drop-a-ii" class="drop-zone mt-2" data-category="rzeczowe-aktywa-trwale">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">III.</td>
+                                    <td class="subcategory-header">Należności długoterminowe
+                                        <div id="drop-a-iii" class="drop-zone mt-2" data-category="naleznosci-dlugoterminowe">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">IV.</td>
+                                    <td class="subcategory-header">Inwestycje długoterminowe
+                                        <div id="drop-a-iv" class="drop-zone mt-2" data-category="inwestycje-dlugoterminowe">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center font-semibold">B.</td>
+                                    <td class="category-header">Aktywa obrotowe</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">I.</td>
+                                    <td class="subcategory-header">Zapasy
+                                        <div id="drop-b-i" class="drop-zone mt-2" data-category="zapasy">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">II.</td>
+                                    <td class="subcategory-header">Należności krótkoterminowe
+                                        <div id="drop-b-ii" class="drop-zone mt-2" data-category="naleznosci-krotkoterminowe">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">III.</td>
+                                    <td class="subcategory-header">Inwestycje krótkoterminowe
+                                        <div id="drop-b-iii" class="drop-zone mt-2" data-category="inwestycje-krotkoterminowe">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">C.</td>
+                                    <td class="subcategory-header">Należne wpłaty na kapitał podstawowy
+                                        <div id="drop-c" class="drop-zone mt-2" data-category="nalezne-wplaty">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">D.</td>
+                                    <td class="subcategory-header">Udziały (akcje) własne
+                                        <div id="drop-d" class="drop-zone mt-2" data-category="udzialy-akcje-wlasne">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="bilans-table">
+                            <thead>
+                                <tr>
+                                    <th class="w-8">Lp.</th>
+                                    <th>Pasywa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center font-semibold">A.</td>
+                                    <td class="category-header">Kapitał własny</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">I.</td>
+                                    <td class="subcategory-header">Kapitał zakładowy
+                                        <div id="drop-p-a-i" class="drop-zone mt-2" data-category="kapital-zakladowy">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">II.</td>
+                                    <td class="subcategory-header">Kapitał zapasowy
+                                        <div id="drop-p-a-ii" class="drop-zone mt-2" data-category="kapital-zapasowy">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">III.</td>
+                                    <td class="subcategory-header">Kapitał z aktualizacji wyceny
+                                        <div id="drop-p-a-iii" class="drop-zone mt-2" data-category="kapital-z-aktualizacji">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">IV.</td>
+                                    <td class="subcategory-header">Pozostałe kapitały rezerwowe
+                                        <div id="drop-p-a-iv" class="drop-zone mt-2" data-category="kapitaly-rezerwowe">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">V.</td>
+                                    <td class="subcategory-header">Zysk (strata) z lat ubiegłych
+                                        <div id="drop-p-a-v" class="drop-zone mt-2" data-category="zysk-z-lat-ubieglych">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">VI.</td>
+                                    <td class="subcategory-header">Zysk (strata) netto
+                                        <div id="drop-p-a-vi" class="drop-zone mt-2" data-category="zysk-netto">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center font-semibold">B.</td>
+                                    <td class="category-header">Zobowiązania i rezerwy na zobowiązania</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">I.</td>
+                                    <td class="subcategory-header">Rezerwy na zobowiązania
+                                        <div id="drop-p-b-i" class="drop-zone mt-2" data-category="rezerwy-na-zobowiazania">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">II.</td>
+                                    <td class="subcategory-header">Zobowiązania długoterminowe
+                                        <div id="drop-p-b-ii" class="drop-zone mt-2" data-category="zobowiazania-dlugoterminowe">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center">III.</td>
+                                    <td class="subcategory-header">Zobowiązania krótkoterminowe
+                                        <div id="drop-p-b-iii" class="drop-zone mt-2" data-category="zobowiazania-krotkoterminowe">
+                                            <div class="drop-zone-title text-sm">Upuść tutaj</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Elementy do przeciągnięcia -->
+                    <div>
+                        <h4 class="text-lg text-purple-600 mb-4">Elementy do przyporządkowania:</h4>
+                        <div id="items-container-advanced">
+                            <!-- Elementy będą dodawane przez JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex flex-wrap justify-center gap-4">
+                    <button id="check-btn-advanced" class="btn-kawaii bg-gradient-to-r from-green-400 to-green-500">
+                        <i class="fas fa-check mr-2"></i> Sprawdź odpowiedzi
+                    </button>
+                    
+                    <button id="reset-btn-advanced" class="btn-kawaii bg-gradient-to-r from-blue-400 to-blue-500">
                         <i class="fas fa-redo mr-2"></i> Nowe elementy
                     </button>
                 </div>
@@ -229,7 +514,7 @@
             <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
                 <h3 class="text-xl text-purple-600 mb-4">Podpowiedzi</h3>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="basic-hints" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <h4 class="font-semibold text-purple-700 mb-2">Aktywa trwałe</h4>
                         <p class="text-gray-700 mb-4">
@@ -251,6 +536,57 @@
                         <h4 class="font-semibold text-purple-700 mb-2">Zobowiązania</h4>
                         <p class="text-gray-700">
                             Zobowiązania to wynikające z przeszłych zdarzeń obowiązki wykonania świadczeń o określonej wartości, które spowodują wykorzystanie już posiadanych lub przyszłych aktywów jednostki.
+                        </p>
+                    </div>
+                </div>
+                
+                <div id="advanced-hints" class="hidden">
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-purple-700 mb-2">Wartości niematerialne i prawne</h4>
+                        <p class="text-gray-700">
+                            Nabyte przez jednostkę prawa majątkowe nadające się do gospodarczego wykorzystania, o przewidywanym okresie ekonomicznej użyteczności dłuższym niż rok.
+                        </p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-purple-700 mb-2">Rzeczowe aktywa trwałe</h4>
+                        <p class="text-gray-700">
+                            Środki trwałe, środki trwałe w budowie oraz zaliczki na środki trwałe w budowie, o przewidywanym okresie użytkowania dłuższym niż rok.
+                        </p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-purple-700 mb-2">Należności długoterminowe</h4>
+                        <p class="text-gray-700">
+                            Należności, których termin wymagalności jest dłuższy niż 12 miesięcy od dnia bilansowego.
+                        </p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-purple-700 mb-2">Inwestycje długoterminowe</h4>
+                        <p class="text-gray-700">
+                            Aktywa finansowe (np. udziały, akcje) oraz nieruchomości i wartości niematerialne i prawne, które nie są użytkowane przez jednostkę, lecz zostały nabyte w celu osiągnięcia korzyści.
+                        </p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-purple-700 mb-2">Zapasy</h4>
+                        <p class="text-gray-700">
+                            Materiały, produkty (gotowe, półprodukty i w toku), towary nabyte w celu odsprzedaży oraz zaliczki na dostawy.
+                        </p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-purple-700 mb-2">Należności krótkoterminowe</h4>
+                        <p class="text-gray-700">
+                            Należności z tytułu dostaw i usług oraz inne należności, których termin wymagalności jest nie dłuższy niż 12 miesięcy od dnia bilansowego.
+                        </p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-purple-700 mb-2">Inwestycje krótkoterminowe</h4>
+                        <p class="text-gray-700">
+                            Środki pieniężne, krótkoterminowe aktywa finansowe (np. udziały, akcje, udzielone pożyczki) oraz inne inwestycje krótkoterminowe.
                         </p>
                     </div>
                 </div>
@@ -286,131 +622,181 @@
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Definicja puli 100 elementów bilansu
+            // Definicja puli 100 elementów bilansu z bardziej szczegółowymi kategoriami
             const bilansItems = [
-                // Aktywa trwałe (25 elementów)
-                { id: "item-1", text: "Budynek fabryki", category: "aktywa-trwale" },
-                { id: "item-2", text: "Patent na technologię", category: "aktywa-trwale" },
-                { id: "item-3", text: "Maszyny produkcyjne", category: "aktywa-trwale" },
-                { id: "item-4", text: "Środki transportu", category: "aktywa-trwale" },
-                { id: "item-5", text: "Wartość firmy", category: "aktywa-trwale" },
-                { id: "item-6", text: "Udziały (akcje) własne", category: "aktywa-trwale" },
-                { id: "item-7", text: "Grunty własne", category: "aktywa-trwale" },
-                { id: "item-8", text: "Prawo wieczystego użytkowania gruntu", category: "aktywa-trwale" },
-                { id: "item-9", text: "Licencje na oprogramowanie", category: "aktywa-trwale" },
-                { id: "item-10", text: "Znak towarowy", category: "aktywa-trwale" },
-                { id: "item-11", text: "Długoterminowe aktywa finansowe", category: "aktywa-trwale" },
-                { id: "item-12", text: "Nieruchomości inwestycyjne", category: "aktywa-trwale" },
-                { id: "item-13", text: "Długoterminowe należności", category: "aktywa-trwale" },
-                { id: "item-14", text: "Koszty prac rozwojowych", category: "aktywa-trwale" },
-                { id: "item-15", text: "Urządzenia techniczne", category: "aktywa-trwale" },
-                { id: "item-16", text: "Inwestycje w jednostkach zależnych", category: "aktywa-trwale" },
-                { id: "item-17", text: "Sprzęt komputerowy", category: "aktywa-trwale" },
-                { id: "item-18", text: "Prawo autorskie", category: "aktywa-trwale" },
-                { id: "item-19", text: "Aktywa z tytułu odroczonego podatku dochodowego", category: "aktywa-trwale" },
-                { id: "item-20", text: "Meble biurowe", category: "aktywa-trwale" },
-                { id: "item-21", text: "Dzieła sztuki jako inwestycja długoterminowa", category: "aktywa-trwale" },
-                { id: "item-22", text: "Kaucje długoterminowe", category: "aktywa-trwale" },
-                { id: "item-23", text: "Długoterminowe rozliczenia międzyokresowe", category: "aktywa-trwale" },
-                { id: "item-24", text: "Aktywa trwałe przeznaczone do sprzedaży", category: "aktywa-trwale" },
-                { id: "item-25", text: "Prawa do emisji CO2", category: "aktywa-trwale" },
-
-                // Aktywa obrotowe (25 elementów)
-                { id: "item-26", text: "Zapasy materiałów", category: "aktywa-obrotowe" },
-                { id: "item-27", text: "Środki pieniężne w kasie", category: "aktywa-obrotowe" },
-                { id: "item-28", text: "Należności z tytułu dostaw", category: "aktywa-obrotowe" },
-                { id: "item-29", text: "Produkty gotowe", category: "aktywa-obrotowe" },
-                { id: "item-30", text: "Produkcja w toku", category: "aktywa-obrotowe" },
-                { id: "item-31", text: "Krótkoterminowe rozliczenia międzyokresowe", category: "aktywa-obrotowe" },
-                { id: "item-32", text: "Zaliczki na dostawy", category: "aktywa-obrotowe" },
-                { id: "item-33", text: "Środki pieniężne na rachunkach bankowych", category: "aktywa-obrotowe" },
-                { id: "item-34", text: "Należności z tytułu podatków", category: "aktywa-obrotowe" },
-                { id: "item-35", text: "Krótkoterminowe papiery wartościowe", category: "aktywa-obrotowe" },
-                { id: "item-36", text: "Udzielone pożyczki krótkoterminowe", category: "aktywa-obrotowe" },
-                { id: "item-37", text: "Towary handlowe", category: "aktywa-obrotowe" },
-                { id: "item-38", text: "VAT naliczony do odliczenia", category: "aktywa-obrotowe" },
-                { id: "item-39", text: "Czeki otrzymane", category: "aktywa-obrotowe" },
-                { id: "item-40", text: "Weksle obce", category: "aktywa-obrotowe" },
-                { id: "item-41", text: "Należności od pracowników", category: "aktywa-obrotowe" },
-                { id: "item-42", text: "Należności sporne", category: "aktywa-obrotowe" },
-                { id: "item-43", text: "Lokata overnight", category: "aktywa-obrotowe" },
-                { id: "item-44", text: "Zapasy części zamiennych", category: "aktywa-obrotowe" },
-                { id: "item-45", text: "Środki pieniężne w drodze", category: "aktywa-obrotowe" },
-                { id: "item-46", text: "Opakowania zwrotne", category: "aktywa-obrotowe" },
-                { id: "item-47", text: "Aktywa z umów z klientami", category: "aktywa-obrotowe" },
-                { id: "item-48", text: "Półprodukty", category: "aktywa-obrotowe" },
-                { id: "item-49", text: "Depozyty bankowe (do 3 miesięcy)", category: "aktywa-obrotowe" },
-                { id: "item-50", text: "Należności wekslowe", category: "aktywa-obrotowe" },
-
-                // Kapitał własny (25 elementów)
-                { id: "item-51", text: "Kapitał zakładowy", category: "kapital-wlasny" },
-                { id: "item-52", text: "Zysk netto", category: "kapital-wlasny" },
-                { id: "item-53", text: "Kapitał zapasowy", category: "kapital-wlasny" },
-                { id: "item-54", text: "Zysk z lat ubiegłych", category: "kapital-wlasny" },
-                { id: "item-55", text: "Kapitał z aktualizacji wyceny", category: "kapital-wlasny" },
-                { id: "item-56", text: "Niepodzielony zysk z lat ubiegłych", category: "kapital-wlasny" },
-                { id: "item-57", text: "Kapitał rezerwowy", category: "kapital-wlasny" },
-                { id: "item-58", text: "Strata netto", category: "kapital-wlasny" },
-                { id: "item-59", text: "Strata z lat ubiegłych", category: "kapital-wlasny" },
-                { id: "item-60", text: "Udziały mniejszościowe", category: "kapital-wlasny" },
-                { id: "item-61", text: "Niezarejestrowana emisja akcji", category: "kapital-wlasny" },
-                { id: "item-62", text: "Kapitał z emisji akcji powyżej wartości nominalnej", category: "kapital-wlasny" },
-                { id: "item-63", text: "Fundusz udziałowy", category: "kapital-wlasny" },
-                { id: "item-64", text: "Różnice kursowe z przeliczenia", category: "kapital-wlasny" },
-                { id: "item-65", text: "Wkłady wspólników", category: "kapital-wlasny" },
-                { id: "item-66", text: "Fundusz założycielski", category: "kapital-wlasny" },
-                { id: "item-67", text: "Zaliczka na dywidendę", category: "kapital-wlasny" },
-                { id: "item-68", text: "Dopłaty wspólników", category: "kapital-wlasny" },
-                { id: "item-69", text: "Instrument zabezpieczający", category: "kapital-wlasny" },
-                { id: "item-70", text: "Pozostałe kapitały rezerwowe", category: "kapital-wlasny" },
-                { id: "item-71", text: "Akcje własne (wielkość ujemna)", category: "kapital-wlasny" },
-                { id: "item-72", text: "Odpisy z zysku netto w ciągu roku obrotowego", category: "kapital-wlasny" },
-                { id: "item-73", text: "Kapitał podstawowy w trakcie rejestracji", category: "kapital-wlasny" },
-                { id: "item-74", text: "Fundusz ogólnego ryzyka", category: "kapital-wlasny" },
-                { id: "item-75", text: "Zysk z tytułu zbycia aktywów", category: "kapital-wlasny" },
-
-                // Zobowiązania (25 elementów)
-                { id: "item-76", text: "Kredyt długoterminowy", category: "zobowiazania" },
-                { id: "item-77", text: "Zobowiązania z tytułu wynagrodzeń", category: "zobowiazania" },
-                { id: "item-78", text: "Zobowiązania z tytułu podatków", category: "zobowiazania" },
-                { id: "item-79", text: "Rezerwy na zobowiązania", category: "zobowiazania" },
-                { id: "item-80", text: "Zobowiązania wekslowe", category: "zobowiazania" },
-                { id: "item-81", text: "Kredyt krótkoterminowy", category: "zobowiazania" },
-                { id: "item-82", text: "Zobowiązania z tytułu dostaw i usług", category: "zobowiazania" },
-                { id: "item-83", text: "Rezerwa na świadczenia emerytalne", category: "zobowiazania" },
-                { id: "item-84", text: "Zobowiązania z tytułu leasingu finansowego", category: "zobowiazania" },
-                { id: "item-85", text: "Rozliczenia międzyokresowe przychodów", category: "zobowiazania" },
-                { id: "item-86", text: "Zobowiązania z tytułu emisji dłużnych papierów wartościowych", category: "zobowiazania" },
-                { id: "item-87", text: "Zaliczki otrzymane na poczet dostaw", category: "zobowiazania" },
-                { id: "item-88", text: "Zobowiązania z tytułu ubezpieczeń społecznych", category: "zobowiazania" },
-                { id: "item-89", text: "VAT należny", category: "zobowiazania" },
-                { id: "item-90", text: "Rezerwa na naprawy gwarancyjne", category: "zobowiazania" },
-                { id: "item-91", text: "Zobowiązania z tytułu wynagrodzeń", category: "zobowiazania" },
-                { id: "item-92", text: "Zobowiązania wobec wspólników", category: "zobowiazania" },
-                { id: "item-93", text: "Rozliczenia międzyokresowe bierne", category: "zobowiazania" },
-                { id: "item-94", text: "Zobowiązania z tytułu zakupu środków trwałych", category: "zobowiazania" },
-                { id: "item-95", text: "Rezerwa restrukturyzacyjna", category: "zobowiazania" },
-                { id: "item-96", text: "Zobowiązania z tytułu dywidend", category: "zobowiazania" },
-                { id: "item-97", text: "Fundusze specjalne", category: "zobowiazania" },
-                { id: "item-98", text: "Rezerwa z tytułu odroczonego podatku dochodowego", category: "zobowiazania" },
-                { id: "item-99", text: "Zobowiązania z tytułu faktoringu", category: "zobowiazania" },
-                { id: "item-100", text: "Otrzymane kaucje i depozyty", category: "zobowiazania" }
+                // Aktywa trwałe - Wartości niematerialne i prawne
+                { id: "item-1", text: "Koszty zakończonych prac rozwojowych", category: "wartosci-niematerialne" },
+                { id: "item-2", text: "Wartość firmy", category: "wartosci-niematerialne" },
+                { id: "item-3", text: "Patent na technologię", category: "wartosci-niematerialne" },
+                { id: "item-4", text: "Znak towarowy", category: "wartosci-niematerialne" },
+                { id: "item-5", text: "Licencje na oprogramowanie", category: "wartosci-niematerialne" },
+                { id: "item-6", text: "Prawo autorskie", category: "wartosci-niematerialne" },
+                
+                // Aktywa trwałe - Rzeczowe aktywa trwałe
+                { id: "item-7", text: "Grunty własne", category: "rzeczowe-aktywa-trwale" },
+                { id: "item-8", text: "Budynki i lokale", category: "rzeczowe-aktywa-trwale" },
+                { id: "item-9", text: "Urządzenia techniczne i maszyny", category: "rzeczowe-aktywa-trwale" },
+                { id: "item-10", text: "Środki transportu", category: "rzeczowe-aktywa-trwale" },
+                { id: "item-11", text: "Sprzęt komputerowy", category: "rzeczowe-aktywa-trwale" },
+                { id: "item-12", text: "Środki trwałe w budowie", category: "rzeczowe-aktywa-trwale" },
+                
+                // Aktywa trwałe - Należności długoterminowe
+                { id: "item-13", text: "Należności z tytułu kaucji długoterminowych", category: "naleznosci-dlugoterminowe" },
+                { id: "item-14", text: "Należności długoterminowe od jednostek powiązanych", category: "naleznosci-dlugoterminowe" },
+                { id: "item-15", text: "Należności od pozostałych jednostek", category: "naleznosci-dlugoterminowe" },
+                
+                // Aktywa trwałe - Inwestycje długoterminowe
+                { id: "item-16", text: "Nieruchomości inwestycyjne", category: "inwestycje-dlugoterminowe" },
+                { id: "item-17", text: "Wartości niematerialne i prawne inwestycyjne", category: "inwestycje-dlugoterminowe" },
+                { id: "item-18", text: "Długoterminowe aktywa finansowe", category: "inwestycje-dlugoterminowe" },
+                { id: "item-19", text: "Udziały lub akcje w innych jednostkach", category: "inwestycje-dlugoterminowe" },
+                { id: "item-20", text: "Inne inwestycje długoterminowe", category: "inwestycje-dlugoterminowe" },
+                
+                // Aktywa obrotowe - Zapasy
+                { id: "item-21", text: "Materiały", category: "zapasy" },
+                { id: "item-22", text: "Półprodukty i produkty w toku", category: "zapasy" },
+                { id: "item-23", text: "Produkty gotowe", category: "zapasy" },
+                { id: "item-24", text: "Towary handlowe", category: "zapasy" },
+                { id: "item-25", text: "Zaliczki na dostawy i usługi", category: "zapasy" },
+                
+                // Aktywa obrotowe - Należności krótkoterminowe
+                { id: "item-26", text: "Należności z tytułu dostaw i usług", category: "naleznosci-krotkoterminowe" },
+                { id: "item-27", text: "Należności z tytułu podatków i dotacji", category: "naleznosci-krotkoterminowe" },
+                { id: "item-28", text: "Należności dochodzone na drodze sądowej", category: "naleznosci-krotkoterminowe" },
+                { id: "item-29", text: "Należności od pracowników", category: "naleznosci-krotkoterminowe" },
+                { id: "item-30", text: "Inne należności", category: "naleznosci-krotkoterminowe" },
+                
+                // Aktywa obrotowe - Inwestycje krótkoterminowe
+                { id: "item-31", text: "Środki pieniężne w kasie", category: "inwestycje-krotkoterminowe" },
+                { id: "item-32", text: "Środki pieniężne na rachunkach bankowych", category: "inwestycje-krotkoterminowe" },
+                { id: "item-33", text: "Krótkoterminowe papiery wartościowe", category: "inwestycje-krotkoterminowe" },
+                { id: "item-34", text: "Udzielone pożyczki krótkoterminowe", category: "inwestycje-krotkoterminowe" },
+                { id: "item-35", text: "Inne aktywa pieniężne", category: "inwestycje-krotkoterminowe" },
+                
+                // Należne wpłaty na kapitał podstawowy
+                { id: "item-36", text: "Należne wpłaty na kapitał zakładowy", category: "nalezne-wplaty" },
+                { id: "item-37", text: "Należne wpłaty na kapitał zapasowy", category: "nalezne-wplaty" },
+                
+                // Udziały (akcje) własne
+                { id: "item-38", text: "Udziały (akcje) własne do zbycia", category: "udzialy-akcje-wlasne" },
+                { id: "item-39", text: "Akcje własne wyemitowane", category: "udzialy-akcje-wlasne" },
+                
+                // Kapitał własny - Kapitał zakładowy
+                { id: "item-40", text: "Kapitał zakładowy spółki akcyjnej", category: "kapital-zakladowy" },
+                { id: "item-41", text: "Kapitał zakładowy spółki z o.o.", category: "kapital-zakladowy" },
+                { id: "item-42", text: "Fundusz założycielski", category: "kapital-zakladowy" },
+                
+                // Kapitał własny - Kapitał zapasowy
+                { id: "item-43", text: "Kapitał z emisji akcji powyżej wartości nominalnej", category: "kapital-zapasowy" },
+                { id: "item-44", text: "Kapitał zapasowy utworzony z zysku", category: "kapital-zapasowy" },
+                { id: "item-45", text: "Kapitał zapasowy z dopłat wspólników", category: "kapital-zapasowy" },
+                
+                // Kapitał własny - Kapitał z aktualizacji wyceny
+                { id: "item-46", text: "Kapitał z aktualizacji wyceny środków trwałych", category: "kapital-z-aktualizacji" },
+                { id: "item-47", text: "Kapitał z aktualizacji wyceny inwestycji", category: "kapital-z-aktualizacji" },
+                
+                // Kapitał własny - Pozostałe kapitały rezerwowe
+                { id: "item-48", text: "Kapitał rezerwowy utworzony zgodnie ze statutem", category: "kapitaly-rezerwowe" },
+                { id: "item-49", text: "Kapitał rezerwowy z dopłat wspólników", category: "kapitaly-rezerwowe" },
+                { id: "item-50", text: "Kapitał rezerwowy na wykup akcji własnych", category: "kapitaly-rezerwowe" },
+                
+                // Kapitał własny - Zysk (strata) z lat ubiegłych
+                { id: "item-51", text: "Niepodzielony zysk z lat ubiegłych", category: "zysk-z-lat-ubieglych" },
+                { id: "item-52", text: "Niepokryta strata z lat ubiegłych", category: "zysk-z-lat-ubieglych" },
+                
+                // Kapitał własny - Zysk (strata) netto
+                { id: "item-53", text: "Zysk netto bieżącego roku obrotowego", category: "zysk-netto" },
+                { id: "item-54", text: "Strata netto bieżącego roku obrotowego", category: "zysk-netto" },
+                
+                // Zobowiązania - Rezerwy na zobowiązania
+                { id: "item-55", text: "Rezerwa z tytułu odroczonego podatku dochodowego", category: "rezerwy-na-zobowiazania" },
+                { id: "item-56", text: "Rezerwa na świadczenia emerytalne i podobne", category: "rezerwy-na-zobowiazania" },
+                { id: "item-57", text: "Rezerwa na naprawy gwarancyjne", category: "rezerwy-na-zobowiazania" },
+                { id: "item-58", text: "Rezerwa restrukturyzacyjna", category: "rezerwy-na-zobowiazania" },
+                { id: "item-59", text: "Pozostałe rezerwy", category: "rezerwy-na-zobowiazania" },
+                
+                // Zobowiązania - Zobowiązania długoterminowe
+                { id: "item-60", text: "Kredyty i pożyczki długoterminowe", category: "zobowiazania-dlugoterminowe" },
+                { id: "item-61", text: "Zobowiązania z tytułu emisji dłużnych papierów wartościowych", category: "zobowiazania-dlugoterminowe" },
+                { id: "item-62", text: "Zobowiązania z tytułu leasingu finansowego", category: "zobowiazania-dlugoterminowe" },
+                { id: "item-63", text: "Inne zobowiązania długoterminowe", category: "zobowiazania-dlugoterminowe" },
+                
+                // Zobowiązania - Zobowiązania krótkoterminowe
+                { id: "item-64", text: "Kredyty i pożyczki krótkoterminowe", category: "zobowiazania-krotkoterminowe" },
+                { id: "item-65", text: "Zobowiązania z tytułu dostaw i usług", category: "zobowiazania-krotkoterminowe" },
+                { id: "item-66", text: "Zobowiązania z tytułu podatków, ceł i ubezpieczeń", category: "zobowiazania-krotkoterminowe" },
+                { id: "item-67", text: "Zobowiązania z tytułu wynagrodzeń", category: "zobowiazania-krotkoterminowe" },
+                { id: "item-68", text: "Inne zobowiązania krótkoterminowe", category: "zobowiazania-krotkoterminowe" },
+                { id: "item-69", text: "Fundusze specjalne", category: "zobowiazania-krotkoterminowe" },
+                { id: "item-70", text: "Zaliczki otrzymane na dostawy", category: "zobowiazania-krotkoterminowe" }
             ];
+            
+            // Elementy dla trybu podstawowego - mapowanie szczegółowych kategorii do czterech głównych
+            const basicCategories = {
+                "aktywa-trwale": ["wartosci-niematerialne", "rzeczowe-aktywa-trwale", "naleznosci-dlugoterminowe", "inwestycje-dlugoterminowe"],
+                "aktywa-obrotowe": ["zapasy", "naleznosci-krotkoterminowe", "inwestycje-krotkoterminowe", "nalezne-wplaty", "udzialy-akcje-wlasne"],
+                "kapital-wlasny": ["kapital-zakladowy", "kapital-zapasowy", "kapital-z-aktualizacji", "kapitaly-rezerwowe", "zysk-z-lat-ubieglych", "zysk-netto"],
+                "zobowiazania": ["rezerwy-na-zobowiazania", "zobowiazania-dlugoterminowe", "zobowiazania-krotkoterminowe"]
+            };
             
             // Zmienne globalne
             let currentScore = 0;
             let totalPoints = 0;
+            let currentMode = 'basic'; // 'basic' lub 'advanced'
             
             // Referencje do elementów DOM
-            const itemsContainer = document.getElementById('items-container');
-            const exerciseTitle = document.getElementById('exercise-title');
-            const checkBtn = document.getElementById('check-btn');
-            const resetBtn = document.getElementById('reset-btn');
+            const basicModeSection = document.getElementById('basic-mode-section');
+            const advancedModeSection = document.getElementById('advanced-mode-section');
+            const basicModeBtn = document.getElementById('basic-mode-btn');
+            const advancedModeBtn = document.getElementById('advanced-mode-btn');
+            const basicHints = document.getElementById('basic-hints');
+            const advancedHints = document.getElementById('advanced-hints');
+            
+            const itemsContainerBasic = document.getElementById('items-container-basic');
+            const itemsContainerAdvanced = document.getElementById('items-container-advanced');
             const scoreDisplay = document.getElementById('score');
             const totalPointsDisplay = document.getElementById('total-points');
-            const dropZones = document.querySelectorAll('.drop-zone');
+            const checkBtnBasic = document.getElementById('check-btn-basic');
+            const resetBtnBasic = document.getElementById('reset-btn-basic');
+            const checkBtnAdvanced = document.getElementById('check-btn-advanced');
+            const resetBtnAdvanced = document.getElementById('reset-btn-advanced');
             const itemsCountSelect = document.getElementById('items-count');
             const balancedCategoriesCheckbox = document.getElementById('balanced-categories');
+            
+            // Wszystkie strefy upuszczania (dla obu trybów)
+            let dropZones = document.querySelectorAll('.drop-zone');
+            
+            // Przełączanie między trybami
+            basicModeBtn.addEventListener('click', function() {
+                setMode('basic');
+            });
+            
+            advancedModeBtn.addEventListener('click', function() {
+                setMode('advanced');
+            });
+            
+            function setMode(mode) {
+                currentMode = mode;
+                
+                if (mode === 'basic') {
+                    basicModeSection.classList.remove('hidden');
+                    advancedModeSection.classList.add('hidden');
+                    basicHints.classList.remove('hidden');
+                    advancedHints.classList.add('hidden');
+                    basicModeBtn.classList.add('active');
+                    advancedModeBtn.classList.remove('active');
+                } else {
+                    basicModeSection.classList.add('hidden');
+                    advancedModeSection.classList.remove('hidden');
+                    basicHints.classList.add('hidden');
+                    advancedHints.classList.remove('hidden');
+                    basicModeBtn.classList.remove('active');
+                    advancedModeBtn.classList.add('active');
+                }
+                
+                // Zresetuj ćwiczenie przy zmianie trybu
+                resetExercise();
+            }
             
             // Funkcja do pobrania liczby elementów
             function getItemsCount() {
@@ -424,9 +810,24 @@
             
             // Funkcja inicjalizująca ćwiczenie
             function initExercise() {
+                // Resetowanie punktacji dla nowego ćwiczenia
+                currentScore = 0;
+                totalPoints = 0;
+                scoreDisplay.textContent = currentScore;
+                
+                if (currentMode === 'basic') {
+                    initBasicExercise();
+                } else {
+                    initAdvancedExercise();
+                }
+            }
+            
+            // Funkcja inicjalizująca ćwiczenie w trybie podstawowym
+            function initBasicExercise() {
                 // Wyczyszczenie kontenerów
-                itemsContainer.innerHTML = '';
-                dropZones.forEach(zone => {
+                itemsContainerBasic.innerHTML = '';
+                const basicDropZones = document.querySelectorAll('#basic-mode-section .drop-zone');
+                basicDropZones.forEach(zone => {
                     const title = zone.querySelector('.drop-zone-title');
                     zone.innerHTML = '';
                     zone.appendChild(title);
@@ -434,73 +835,167 @@
                     zone.classList.remove('highlight');
                 });
                 
+                // Wybór losowych elementów z puli
                 const itemsCount = getItemsCount();
-                
-                // Wybieranie elementów w zależności od ustawienia "zrównoważone kategorie"
-                let selectedItems = [];
-                
-                if (isBalancedCategories()) {
-                    // Stratyfikowane losowanie - po równo z każdej kategorii
-                    const aktywaTrwale = bilansItems.filter(item => item.category === "aktywa-trwale");
-                    const aktywaObrotowe = bilansItems.filter(item => item.category === "aktywa-obrotowe");
-                    const kapitalWlasny = bilansItems.filter(item => item.category === "kapital-wlasny");
-                    const zobowiazania = bilansItems.filter(item => item.category === "zobowiazania");
-                    
-                    // Ile elementów z każdej kategorii (zaokrąglone do najbliższej liczby całkowitej)
-                    const itemsPerCategory = Math.ceil(itemsCount / 4);
-                    
-                    // Funkcja do pobrania losowych n elementów z tablicy
-                    function getRandomItems(array, n) {
-                        const shuffled = [...array].sort(() => Math.random() - 0.5);
-                        return shuffled.slice(0, n);
-                    }
-                    
-                    // Wybierz losowe elementy z każdej kategorii
-                    selectedItems = [
-                        ...getRandomItems(aktywaTrwale, itemsPerCategory),
-                        ...getRandomItems(aktywaObrotowe, itemsPerCategory),
-                        ...getRandomItems(kapitalWlasny, itemsPerCategory),
-                        ...getRandomItems(zobowiazania, itemsPerCategory)
-                    ];
-                    
-                    // Ogranicz do żądanej liczby elementów
-                    selectedItems = selectedItems.slice(0, itemsCount);
-                } else {
-                    // Całkowicie losowe elementy ze wszystkich kategorii
-                    const shuffledItems = [...bilansItems].sort(() => Math.random() - 0.5);
-                    selectedItems = shuffledItems.slice(0, itemsCount);
-                }
-                
-                // Ponownie pomieszaj elementy, aby nie były pogrupowane kategoriami
-                const shuffledItems = selectedItems.sort(() => Math.random() - 0.5);
+                let selectedItems = selectRandomItems(itemsCount);
                 
                 // Dodanie elementów do przeciągnięcia
-                shuffledItems.forEach(item => {
-                    const itemElement = document.createElement('div');
-                    itemElement.id = item.id;
-                    itemElement.className = 'drag-item';
-                    itemElement.setAttribute('draggable', 'true');
-                    itemElement.setAttribute('data-category', item.category);
-                    itemElement.textContent = item.text;
+                selectedItems.forEach(item => {
+                    // Mapowanie szczegółowej kategorii na podstawową
+                    let basicCategory = getBasicCategory(item.category);
                     
-                    // Obsługa przeciągania
-                    itemElement.addEventListener('dragstart', handleDragStart);
-                    itemElement.addEventListener('dragend', handleDragEnd);
-                    
-                    // Obsługa dotyku dla urządzeń mobilnych
-                    itemElement.addEventListener('touchstart', handleTouchStart, { passive: false });
-                    itemElement.addEventListener('touchmove', handleTouchMove, { passive: false });
-                    itemElement.addEventListener('touchend', handleTouchEnd);
-                    
-                    itemsContainer.appendChild(itemElement);
+                    const itemElement = createDraggableItem(item.id, item.text, basicCategory);
+                    itemsContainerBasic.appendChild(itemElement);
                 });
                 
                 // Aktualizacja licznika punktów
-                totalPoints = shuffledItems.length;
+                totalPoints = selectedItems.length;
                 totalPointsDisplay.textContent = totalPoints;
                 
                 // Resetowanie przycisków
-                checkBtn.disabled = false;
+                checkBtnBasic.disabled = false;
+            }
+            
+            // Funkcja inicjalizująca ćwiczenie w trybie zaawansowanym
+            function initAdvancedExercise() {
+                // Wyczyszczenie kontenerów
+                itemsContainerAdvanced.innerHTML = '';
+                const advancedDropZones = document.querySelectorAll('#advanced-mode-section .drop-zone');
+                advancedDropZones.forEach(zone => {
+                    const title = zone.querySelector('.drop-zone-title');
+                    zone.innerHTML = '';
+                    zone.appendChild(title);
+                    zone.classList.remove('feedback-correct', 'feedback-incorrect');
+                    zone.classList.remove('highlight');
+                });
+                
+                // Wybór losowych elementów z puli
+                const itemsCount = getItemsCount();
+                let selectedItems = selectRandomItems(itemsCount);
+                
+                // Dodanie elementów do przeciągnięcia
+                selectedItems.forEach(item => {
+                    const itemElement = createDraggableItem(item.id, item.text, item.category);
+                    itemsContainerAdvanced.appendChild(itemElement);
+                });
+                
+                // Aktualizacja licznika punktów
+                totalPoints = selectedItems.length;
+                totalPointsDisplay.textContent = totalPoints;
+                
+                // Resetowanie przycisków
+                checkBtnAdvanced.disabled = false;
+            }
+            
+            // Funkcja tworząca element do przeciągnięcia
+            function createDraggableItem(id, text, category) {
+                const itemElement = document.createElement('div');
+                itemElement.id = id;
+                itemElement.className = 'drag-item';
+                itemElement.setAttribute('draggable', 'true');
+                itemElement.setAttribute('data-category', category);
+                itemElement.textContent = text;
+                
+                // Obsługa przeciągania
+                itemElement.addEventListener('dragstart', handleDragStart);
+                itemElement.addEventListener('dragend', handleDragEnd);
+                
+                // Obsługa dotyku dla urządzeń mobilnych
+                itemElement.addEventListener('touchstart', handleTouchStart, { passive: false });
+                itemElement.addEventListener('touchmove', handleTouchMove, { passive: false });
+                itemElement.addEventListener('touchend', handleTouchEnd);
+                
+                return itemElement;
+            }
+            
+            // Funkcja wybierająca losowe elementy z puli
+            function selectRandomItems(itemsCount) {
+                if (isBalancedCategories()) {
+                    return selectBalancedItems(itemsCount);
+                } else {
+                    return selectRandomItemsUnbalanced(itemsCount);
+                }
+            }
+            
+            // Funkcja wybierająca zrównoważone elementy z puli
+            function selectBalancedItems(itemsCount) {
+                let selectedItems = [];
+                
+                if (currentMode === 'basic') {
+                    // Dla trybu podstawowego wybieramy po równo z 4 głównych kategorii
+                    const aktywatrwale = bilansItems.filter(item => 
+                        basicCategories["aktywa-trwale"].includes(item.category));
+                    const aktywaobrotowe = bilansItems.filter(item => 
+                        basicCategories["aktywa-obrotowe"].includes(item.category));
+                    const kapitalwlasny = bilansItems.filter(item => 
+                        basicCategories["kapital-wlasny"].includes(item.category));
+                    const zobowiazania = bilansItems.filter(item => 
+                        basicCategories["zobowiazania"].includes(item.category));
+                    
+                    const itemsPerCategory = Math.ceil(itemsCount / 4);
+                    
+                    selectedItems = [
+                        ...getRandomItems(aktywatrwale, itemsPerCategory),
+                        ...getRandomItems(aktywaobrotowe, itemsPerCategory),
+                        ...getRandomItems(kapitalwlasny, itemsPerCategory),
+                        ...getRandomItems(zobowiazania, itemsPerCategory)
+                    ];
+                } else {
+                    // Dla trybu zaawansowanego staramy się wybrać po jednym elemencie z każdej podkategorii
+                    const categories = [
+                        "wartosci-niematerialne", "rzeczowe-aktywa-trwale", "naleznosci-dlugoterminowe", 
+                        "inwestycje-dlugoterminowe", "zapasy", "naleznosci-krotkoterminowe", 
+                        "inwestycje-krotkoterminowe", "nalezne-wplaty", "udzialy-akcje-wlasne",
+                        "kapital-zakladowy", "kapital-zapasowy", "kapital-z-aktualizacji", 
+                        "kapitaly-rezerwowe", "zysk-z-lat-ubieglych", "zysk-netto",
+                        "rezerwy-na-zobowiazania", "zobowiazania-dlugoterminowe", "zobowiazania-krotkoterminowe"
+                    ];
+                    
+                    // Dla każdej kategorii wybieramy jeden element
+                    for (let category of categories) {
+                        const categoryItems = bilansItems.filter(item => item.category === category);
+                        if (categoryItems.length > 0) {
+                            const randomItem = categoryItems[Math.floor(Math.random() * categoryItems.length)];
+                            selectedItems.push(randomItem);
+                            
+                            if (selectedItems.length >= itemsCount) {
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Jeśli mamy za mało elementów, dobieramy losowo z całej puli
+                    if (selectedItems.length < itemsCount) {
+                        const remainingItems = bilansItems.filter(item => 
+                            !selectedItems.some(selected => selected.id === item.id));
+                        const additionalItems = getRandomItems(remainingItems, itemsCount - selectedItems.length);
+                        selectedItems = [...selectedItems, ...additionalItems];
+                    }
+                }
+                
+                // Ogranicz do żądanej liczby elementów i wymieszaj
+                return getRandomItems(selectedItems, itemsCount);
+            }
+            
+            // Funkcja wybierająca losowe elementy z puli bez równoważenia kategorii
+            function selectRandomItemsUnbalanced(itemsCount) {
+                return getRandomItems(bilansItems, itemsCount);
+            }
+            
+            // Funkcja pomocnicza do losowego wybierania elementów z tablicy
+            function getRandomItems(array, n) {
+                const shuffled = [...array].sort(() => Math.random() - 0.5);
+                return shuffled.slice(0, n);
+            }
+            
+            // Funkcja mapująca szczegółową kategorię na podstawową
+            function getBasicCategory(detailedCategory) {
+                for (let [basicCategory, detailedCategories] of Object.entries(basicCategories)) {
+                    if (detailedCategories.includes(detailedCategory)) {
+                        return basicCategory;
+                    }
+                }
+                return detailedCategory; // Jeśli nie znaleziono, zwróć oryginalną kategorię
             }
             
             // Obsługa przeciągania - start
@@ -551,7 +1046,7 @@
                 const dropZone = getDropZoneAtPoint(touch.clientX, touch.clientY);
                 
                 // Podświetlenie aktywnej strefy upuszczania
-                dropZones.forEach(zone => {
+                document.querySelectorAll('.drop-zone').forEach(zone => {
                     zone.classList.remove('highlight');
                 });
                 
@@ -575,7 +1070,7 @@
                 const touch = e.changedTouches[0];
                 const dropZone = getDropZoneAtPoint(touch.clientX, touch.clientY);
                 
-                dropZones.forEach(zone => {
+                document.querySelectorAll('.drop-zone').forEach(zone => {
                     zone.classList.remove('highlight');
                 });
                 
@@ -586,41 +1081,43 @@
             
             // Funkcja pomocnicza do znalezienia strefy upuszczania na podstawie współrzędnych
             function getDropZoneAtPoint(x, y) {
-                return Array.from(dropZones).find(zone => {
+                return Array.from(document.querySelectorAll('.drop-zone')).find(zone => {
                     const rect = zone.getBoundingClientRect();
                     return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
                 });
             }
             
-            // Obsługa upuszczania
-            dropZones.forEach(zone => {
-                zone.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    this.classList.add('highlight');
-                });
-                
-                zone.addEventListener('dragleave', function() {
-                    this.classList.remove('highlight');
-                });
-                
-                zone.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    this.classList.remove('highlight');
+            // Konfiguracja stref upuszczania
+            function setupDropZones() {
+                document.querySelectorAll('.drop-zone').forEach(zone => {
+                    zone.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        this.classList.add('highlight');
+                    });
                     
-                    const id = e.dataTransfer.getData('text/plain');
-                    const draggedItem = document.getElementById(id);
+                    zone.addEventListener('dragleave', function() {
+                        this.classList.remove('highlight');
+                    });
                     
-                    if (draggedItem) {
-                        this.appendChild(draggedItem);
-                    }
+                    zone.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        this.classList.remove('highlight');
+                        
+                        const id = e.dataTransfer.getData('text/plain');
+                        const draggedItem = document.getElementById(id);
+                        
+                        if (draggedItem) {
+                            this.appendChild(draggedItem);
+                        }
+                    });
                 });
-            });
+            }
             
-            // Sprawdzanie odpowiedzi
-            checkBtn.addEventListener('click', function() {
+            // Sprawdzanie odpowiedzi dla trybu podstawowego
+            checkBtnBasic.addEventListener('click', function() {
                 let correctCount = 0;
                 
-                dropZones.forEach(zone => {
+                document.querySelectorAll('#basic-mode-section .drop-zone').forEach(zone => {
                     const category = zone.getAttribute('data-category');
                     const items = zone.querySelectorAll('.drag-item');
                     
@@ -657,23 +1154,87 @@
                 this.disabled = true;
             });
             
-            // Resetowanie ćwiczenia i losowanie nowych elementów
-            resetBtn.addEventListener('click', function() {
-                initExercise();
+            // Sprawdzanie odpowiedzi dla trybu zaawansowanego
+            checkBtnAdvanced.addEventListener('click', function() {
+                let correctCount = 0;
+                
+                document.querySelectorAll('#advanced-mode-section .drop-zone').forEach(zone => {
+                    const category = zone.getAttribute('data-category');
+                    const items = zone.querySelectorAll('.drag-item');
+                    
+                    let allCorrect = true;
+                    
+                    items.forEach(item => {
+                        const itemCategory = item.getAttribute('data-category');
+                        
+                        if (itemCategory === category) {
+                            item.style.borderColor = '#10B981';
+                            item.style.backgroundColor = 'rgba(167, 243, 208, 0.2)';
+                            correctCount++;
+                        } else {
+                            item.style.borderColor = '#EF4444';
+                            item.style.backgroundColor = 'rgba(254, 202, 202, 0.2)';
+                            allCorrect = false;
+                        }
+                    });
+                    
+                    if (items.length > 0) {
+                        if (allCorrect) {
+                            zone.classList.add('feedback-correct');
+                        } else {
+                            zone.classList.add('feedback-incorrect');
+                        }
+                    }
+                });
+                
+                // Aktualizacja wyniku
+                currentScore += correctCount;
+                scoreDisplay.textContent = currentScore;
+                
+                // Dezaktywacja przycisku sprawdzania
+                this.disabled = true;
             });
             
-            // Inicjalizacja pierwszego ćwiczenia
-            initExercise();
+            // Resetowanie ćwiczenia
+            function resetExercise() {
+                // Zresetuj wynik przy całkowitym resecie
+                currentScore = 0;
+                totalPoints = 0;
+                scoreDisplay.textContent = currentScore;
+                totalPointsDisplay.textContent = totalPoints;
+                
+                initExercise();
+            }
             
-            // Dodanie obsługi zmiany liczby elementów
+            // Przyciski resetowania
+            resetBtnBasic.addEventListener('click', function() {
+                initBasicExercise();
+            });
+            
+            resetBtnAdvanced.addEventListener('click', function() {
+                initAdvancedExercise();
+            });
+            
+            // Zmiany ustawień
             itemsCountSelect.addEventListener('change', function() {
-                initExercise();
+                if (currentMode === 'basic') {
+                    initBasicExercise();
+                } else {
+                    initAdvancedExercise();
+                }
             });
             
-            // Dodanie obsługi zmiany trybu wyboru elementów
             balancedCategoriesCheckbox.addEventListener('change', function() {
-                initExercise();
+                if (currentMode === 'basic') {
+                    initBasicExercise();
+                } else {
+                    initAdvancedExercise();
+                }
             });
+            
+            // Inicjalizacja strony
+            setupDropZones();
+            initExercise();
         });
     </script>
 </body>
