@@ -141,8 +141,31 @@
                     Po umieszczeniu wszystkich elementów, kliknij przycisk "Sprawdź odpowiedzi", aby zobaczyć, które pozycje zostały prawidłowo przyporządkowane.
                 </p>
                 <p class="text-gray-700">
-                    Po wykonaniu jednego ćwiczenia możesz przejść do kolejnego, klikając przycisk "Następne ćwiczenie".
+                    Po sprawdzeniu możesz zresetować ćwiczenie, klikając przycisk "Nowe elementy", aby wylosować nowy zestaw pozycji bilansu z dużej puli.
                 </p>
+            </div>
+        </section>
+
+        <!-- Ustawienia -->
+        <section class="mb-8">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
+                <h3 class="text-xl text-purple-600 mb-4">Ustawienia ćwiczenia</h3>
+                
+                <div class="flex flex-wrap items-center mb-4">
+                    <label for="items-count" class="mr-4 text-gray-700 w-full md:w-auto mb-2 md:mb-0">Liczba elementów w ćwiczeniu:</label>
+                    <select id="items-count" class="bg-white border-2 border-pink-200 rounded-lg p-2 text-gray-700">
+                        <option value="8">8 (łatwe)</option>
+                        <option value="12" selected>12 (średnie)</option>
+                        <option value="16">16 (trudne)</option>
+                        <option value="20">20 (wyzwanie)</option>
+                    </select>
+                </div>
+                
+                <div class="flex flex-wrap items-center">
+                    <label for="balanced-categories" class="mr-4 text-gray-700 w-full md:w-auto mb-2 md:mb-0">Równe proporcje kategorii:</label>
+                    <input type="checkbox" id="balanced-categories" class="w-5 h-5 text-pink-500" checked>
+                    <span class="ml-2 text-sm text-gray-500">(zapewnia elementy z każdej kategorii)</span>
+                </div>
             </div>
         </section>
 
@@ -156,7 +179,7 @@
         <!-- Ćwiczenie -->
         <section class="mb-12">
             <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
-                <h3 class="text-xl text-purple-600 mb-6" id="exercise-title">Ćwiczenie 1: Podstawowe kategorie bilansu</h3>
+                <h3 class="text-xl text-purple-600 mb-6" id="exercise-title">Ćwiczenie: Dopasuj elementy bilansu</h3>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Kategorie docelowe -->
@@ -194,12 +217,8 @@
                         <i class="fas fa-check mr-2"></i> Sprawdź odpowiedzi
                     </button>
                     
-                    <button id="next-btn" class="btn-kawaii bg-gradient-to-r from-purple-400 to-purple-500" disabled>
-                        <i class="fas fa-arrow-right mr-2"></i> Następne ćwiczenie
-                    </button>
-                    
-                    <button id="reset-btn" class="btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500">
-                        <i class="fas fa-redo mr-2"></i> Resetuj ćwiczenie
+                    <button id="reset-btn" class="btn-kawaii bg-gradient-to-r from-blue-400 to-blue-500">
+                        <i class="fas fa-redo mr-2"></i> Nowe elementy
                     </button>
                 </div>
             </div>
@@ -267,51 +286,118 @@
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Definicja ćwiczeń
-            const exercises = [
-                {
-                    title: "Ćwiczenie 1: Podstawowe kategorie bilansu",
-                    items: [
-                        { id: "item-1", text: "Budynek fabryki", category: "aktywa-trwale" },
-                        { id: "item-2", text: "Zapasy materiałów", category: "aktywa-obrotowe" },
-                        { id: "item-3", text: "Kredyt długoterminowy", category: "zobowiazania" },
-                        { id: "item-4", text: "Kapitał zakładowy", category: "kapital-wlasny" },
-                        { id: "item-5", text: "Środki pieniężne w kasie", category: "aktywa-obrotowe" },
-                        { id: "item-6", text: "Należności z tytułu dostaw", category: "aktywa-obrotowe" },
-                        { id: "item-7", text: "Zysk netto", category: "kapital-wlasny" },
-                        { id: "item-8", text: "Patent na technologię", category: "aktywa-trwale" }
-                    ]
-                },
-                {
-                    title: "Ćwiczenie 2: Szczegółowe pozycje bilansu",
-                    items: [
-                        { id: "item-1", text: "Maszyny produkcyjne", category: "aktywa-trwale" },
-                        { id: "item-2", text: "Zobowiązania z tytułu wynagrodzeń", category: "zobowiazania" },
-                        { id: "item-3", text: "Produkty gotowe", category: "aktywa-obrotowe" },
-                        { id: "item-4", text: "Kapitał zapasowy", category: "kapital-wlasny" },
-                        { id: "item-5", text: "Długoterminowe papiery wartościowe", category: "aktywa-trwale" },
-                        { id: "item-6", text: "Środki transportu", category: "aktywa-trwale" },
-                        { id: "item-7", text: "Zobowiązania z tytułu podatków", category: "zobowiazania" },
-                        { id: "item-8", text: "Produkcja w toku", category: "aktywa-obrotowe" }
-                    ]
-                },
-                {
-                    title: "Ćwiczenie 3: Zaawansowane pozycje bilansu",
-                    items: [
-                        { id: "item-1", text: "Wartość firmy", category: "aktywa-trwale" },
-                        { id: "item-2", text: "Udziały (akcje) własne", category: "aktywa-trwale" },
-                        { id: "item-3", text: "Rezerwy na zobowiązania", category: "zobowiazania" },
-                        { id: "item-4", text: "Zysk z lat ubiegłych", category: "kapital-wlasny" },
-                        { id: "item-5", text: "Krótkoterminowe rozliczenia międzyokresowe", category: "aktywa-obrotowe" },
-                        { id: "item-6", text: "Zaliczki na dostawy", category: "aktywa-obrotowe" },
-                        { id: "item-7", text: "Kapitał z aktualizacji wyceny", category: "kapital-wlasny" },
-                        { id: "item-8", text: "Zobowiązania wekslowe", category: "zobowiazania" }
-                    ]
-                }
+            // Definicja puli 100 elementów bilansu
+            const bilansItems = [
+                // Aktywa trwałe (25 elementów)
+                { id: "item-1", text: "Budynek fabryki", category: "aktywa-trwale" },
+                { id: "item-2", text: "Patent na technologię", category: "aktywa-trwale" },
+                { id: "item-3", text: "Maszyny produkcyjne", category: "aktywa-trwale" },
+                { id: "item-4", text: "Środki transportu", category: "aktywa-trwale" },
+                { id: "item-5", text: "Wartość firmy", category: "aktywa-trwale" },
+                { id: "item-6", text: "Udziały (akcje) własne", category: "aktywa-trwale" },
+                { id: "item-7", text: "Grunty własne", category: "aktywa-trwale" },
+                { id: "item-8", text: "Prawo wieczystego użytkowania gruntu", category: "aktywa-trwale" },
+                { id: "item-9", text: "Licencje na oprogramowanie", category: "aktywa-trwale" },
+                { id: "item-10", text: "Znak towarowy", category: "aktywa-trwale" },
+                { id: "item-11", text: "Długoterminowe aktywa finansowe", category: "aktywa-trwale" },
+                { id: "item-12", text: "Nieruchomości inwestycyjne", category: "aktywa-trwale" },
+                { id: "item-13", text: "Długoterminowe należności", category: "aktywa-trwale" },
+                { id: "item-14", text: "Koszty prac rozwojowych", category: "aktywa-trwale" },
+                { id: "item-15", text: "Urządzenia techniczne", category: "aktywa-trwale" },
+                { id: "item-16", text: "Inwestycje w jednostkach zależnych", category: "aktywa-trwale" },
+                { id: "item-17", text: "Sprzęt komputerowy", category: "aktywa-trwale" },
+                { id: "item-18", text: "Prawo autorskie", category: "aktywa-trwale" },
+                { id: "item-19", text: "Aktywa z tytułu odroczonego podatku dochodowego", category: "aktywa-trwale" },
+                { id: "item-20", text: "Meble biurowe", category: "aktywa-trwale" },
+                { id: "item-21", text: "Dzieła sztuki jako inwestycja długoterminowa", category: "aktywa-trwale" },
+                { id: "item-22", text: "Kaucje długoterminowe", category: "aktywa-trwale" },
+                { id: "item-23", text: "Długoterminowe rozliczenia międzyokresowe", category: "aktywa-trwale" },
+                { id: "item-24", text: "Aktywa trwałe przeznaczone do sprzedaży", category: "aktywa-trwale" },
+                { id: "item-25", text: "Prawa do emisji CO2", category: "aktywa-trwale" },
+
+                // Aktywa obrotowe (25 elementów)
+                { id: "item-26", text: "Zapasy materiałów", category: "aktywa-obrotowe" },
+                { id: "item-27", text: "Środki pieniężne w kasie", category: "aktywa-obrotowe" },
+                { id: "item-28", text: "Należności z tytułu dostaw", category: "aktywa-obrotowe" },
+                { id: "item-29", text: "Produkty gotowe", category: "aktywa-obrotowe" },
+                { id: "item-30", text: "Produkcja w toku", category: "aktywa-obrotowe" },
+                { id: "item-31", text: "Krótkoterminowe rozliczenia międzyokresowe", category: "aktywa-obrotowe" },
+                { id: "item-32", text: "Zaliczki na dostawy", category: "aktywa-obrotowe" },
+                { id: "item-33", text: "Środki pieniężne na rachunkach bankowych", category: "aktywa-obrotowe" },
+                { id: "item-34", text: "Należności z tytułu podatków", category: "aktywa-obrotowe" },
+                { id: "item-35", text: "Krótkoterminowe papiery wartościowe", category: "aktywa-obrotowe" },
+                { id: "item-36", text: "Udzielone pożyczki krótkoterminowe", category: "aktywa-obrotowe" },
+                { id: "item-37", text: "Towary handlowe", category: "aktywa-obrotowe" },
+                { id: "item-38", text: "VAT naliczony do odliczenia", category: "aktywa-obrotowe" },
+                { id: "item-39", text: "Czeki otrzymane", category: "aktywa-obrotowe" },
+                { id: "item-40", text: "Weksle obce", category: "aktywa-obrotowe" },
+                { id: "item-41", text: "Należności od pracowników", category: "aktywa-obrotowe" },
+                { id: "item-42", text: "Należności sporne", category: "aktywa-obrotowe" },
+                { id: "item-43", text: "Lokata overnight", category: "aktywa-obrotowe" },
+                { id: "item-44", text: "Zapasy części zamiennych", category: "aktywa-obrotowe" },
+                { id: "item-45", text: "Środki pieniężne w drodze", category: "aktywa-obrotowe" },
+                { id: "item-46", text: "Opakowania zwrotne", category: "aktywa-obrotowe" },
+                { id: "item-47", text: "Aktywa z umów z klientami", category: "aktywa-obrotowe" },
+                { id: "item-48", text: "Półprodukty", category: "aktywa-obrotowe" },
+                { id: "item-49", text: "Depozyty bankowe (do 3 miesięcy)", category: "aktywa-obrotowe" },
+                { id: "item-50", text: "Należności wekslowe", category: "aktywa-obrotowe" },
+
+                // Kapitał własny (25 elementów)
+                { id: "item-51", text: "Kapitał zakładowy", category: "kapital-wlasny" },
+                { id: "item-52", text: "Zysk netto", category: "kapital-wlasny" },
+                { id: "item-53", text: "Kapitał zapasowy", category: "kapital-wlasny" },
+                { id: "item-54", text: "Zysk z lat ubiegłych", category: "kapital-wlasny" },
+                { id: "item-55", text: "Kapitał z aktualizacji wyceny", category: "kapital-wlasny" },
+                { id: "item-56", text: "Niepodzielony zysk z lat ubiegłych", category: "kapital-wlasny" },
+                { id: "item-57", text: "Kapitał rezerwowy", category: "kapital-wlasny" },
+                { id: "item-58", text: "Strata netto", category: "kapital-wlasny" },
+                { id: "item-59", text: "Strata z lat ubiegłych", category: "kapital-wlasny" },
+                { id: "item-60", text: "Udziały mniejszościowe", category: "kapital-wlasny" },
+                { id: "item-61", text: "Niezarejestrowana emisja akcji", category: "kapital-wlasny" },
+                { id: "item-62", text: "Kapitał z emisji akcji powyżej wartości nominalnej", category: "kapital-wlasny" },
+                { id: "item-63", text: "Fundusz udziałowy", category: "kapital-wlasny" },
+                { id: "item-64", text: "Różnice kursowe z przeliczenia", category: "kapital-wlasny" },
+                { id: "item-65", text: "Wkłady wspólników", category: "kapital-wlasny" },
+                { id: "item-66", text: "Fundusz założycielski", category: "kapital-wlasny" },
+                { id: "item-67", text: "Zaliczka na dywidendę", category: "kapital-wlasny" },
+                { id: "item-68", text: "Dopłaty wspólników", category: "kapital-wlasny" },
+                { id: "item-69", text: "Instrument zabezpieczający", category: "kapital-wlasny" },
+                { id: "item-70", text: "Pozostałe kapitały rezerwowe", category: "kapital-wlasny" },
+                { id: "item-71", text: "Akcje własne (wielkość ujemna)", category: "kapital-wlasny" },
+                { id: "item-72", text: "Odpisy z zysku netto w ciągu roku obrotowego", category: "kapital-wlasny" },
+                { id: "item-73", text: "Kapitał podstawowy w trakcie rejestracji", category: "kapital-wlasny" },
+                { id: "item-74", text: "Fundusz ogólnego ryzyka", category: "kapital-wlasny" },
+                { id: "item-75", text: "Zysk z tytułu zbycia aktywów", category: "kapital-wlasny" },
+
+                // Zobowiązania (25 elementów)
+                { id: "item-76", text: "Kredyt długoterminowy", category: "zobowiazania" },
+                { id: "item-77", text: "Zobowiązania z tytułu wynagrodzeń", category: "zobowiazania" },
+                { id: "item-78", text: "Zobowiązania z tytułu podatków", category: "zobowiazania" },
+                { id: "item-79", text: "Rezerwy na zobowiązania", category: "zobowiazania" },
+                { id: "item-80", text: "Zobowiązania wekslowe", category: "zobowiazania" },
+                { id: "item-81", text: "Kredyt krótkoterminowy", category: "zobowiazania" },
+                { id: "item-82", text: "Zobowiązania z tytułu dostaw i usług", category: "zobowiazania" },
+                { id: "item-83", text: "Rezerwa na świadczenia emerytalne", category: "zobowiazania" },
+                { id: "item-84", text: "Zobowiązania z tytułu leasingu finansowego", category: "zobowiazania" },
+                { id: "item-85", text: "Rozliczenia międzyokresowe przychodów", category: "zobowiazania" },
+                { id: "item-86", text: "Zobowiązania z tytułu emisji dłużnych papierów wartościowych", category: "zobowiazania" },
+                { id: "item-87", text: "Zaliczki otrzymane na poczet dostaw", category: "zobowiazania" },
+                { id: "item-88", text: "Zobowiązania z tytułu ubezpieczeń społecznych", category: "zobowiazania" },
+                { id: "item-89", text: "VAT należny", category: "zobowiazania" },
+                { id: "item-90", text: "Rezerwa na naprawy gwarancyjne", category: "zobowiazania" },
+                { id: "item-91", text: "Zobowiązania z tytułu wynagrodzeń", category: "zobowiazania" },
+                { id: "item-92", text: "Zobowiązania wobec wspólników", category: "zobowiazania" },
+                { id: "item-93", text: "Rozliczenia międzyokresowe bierne", category: "zobowiazania" },
+                { id: "item-94", text: "Zobowiązania z tytułu zakupu środków trwałych", category: "zobowiazania" },
+                { id: "item-95", text: "Rezerwa restrukturyzacyjna", category: "zobowiazania" },
+                { id: "item-96", text: "Zobowiązania z tytułu dywidend", category: "zobowiazania" },
+                { id: "item-97", text: "Fundusze specjalne", category: "zobowiazania" },
+                { id: "item-98", text: "Rezerwa z tytułu odroczonego podatku dochodowego", category: "zobowiazania" },
+                { id: "item-99", text: "Zobowiązania z tytułu faktoringu", category: "zobowiazania" },
+                { id: "item-100", text: "Otrzymane kaucje i depozyty", category: "zobowiazania" }
             ];
             
             // Zmienne globalne
-            let currentExerciseIndex = 0;
             let currentScore = 0;
             let totalPoints = 0;
             
@@ -319,19 +405,25 @@
             const itemsContainer = document.getElementById('items-container');
             const exerciseTitle = document.getElementById('exercise-title');
             const checkBtn = document.getElementById('check-btn');
-            const nextBtn = document.getElementById('next-btn');
             const resetBtn = document.getElementById('reset-btn');
             const scoreDisplay = document.getElementById('score');
             const totalPointsDisplay = document.getElementById('total-points');
             const dropZones = document.querySelectorAll('.drop-zone');
+            const itemsCountSelect = document.getElementById('items-count');
+            const balancedCategoriesCheckbox = document.getElementById('balanced-categories');
+            
+            // Funkcja do pobrania liczby elementów
+            function getItemsCount() {
+                return parseInt(itemsCountSelect.value);
+            }
+            
+            // Funkcja sprawdzająca, czy używać zrównoważonych kategorii
+            function isBalancedCategories() {
+                return balancedCategoriesCheckbox.checked;
+            }
             
             // Funkcja inicjalizująca ćwiczenie
-            function initExercise(exerciseIndex) {
-                const exercise = exercises[exerciseIndex];
-                
-                // Aktualizacja tytułu ćwiczenia
-                exerciseTitle.textContent = exercise.title;
-                
+            function initExercise() {
                 // Wyczyszczenie kontenerów
                 itemsContainer.innerHTML = '';
                 dropZones.forEach(zone => {
@@ -342,8 +434,47 @@
                     zone.classList.remove('highlight');
                 });
                 
+                const itemsCount = getItemsCount();
+                
+                // Wybieranie elementów w zależności od ustawienia "zrównoważone kategorie"
+                let selectedItems = [];
+                
+                if (isBalancedCategories()) {
+                    // Stratyfikowane losowanie - po równo z każdej kategorii
+                    const aktywaTrwale = bilansItems.filter(item => item.category === "aktywa-trwale");
+                    const aktywaObrotowe = bilansItems.filter(item => item.category === "aktywa-obrotowe");
+                    const kapitalWlasny = bilansItems.filter(item => item.category === "kapital-wlasny");
+                    const zobowiazania = bilansItems.filter(item => item.category === "zobowiazania");
+                    
+                    // Ile elementów z każdej kategorii (zaokrąglone do najbliższej liczby całkowitej)
+                    const itemsPerCategory = Math.ceil(itemsCount / 4);
+                    
+                    // Funkcja do pobrania losowych n elementów z tablicy
+                    function getRandomItems(array, n) {
+                        const shuffled = [...array].sort(() => Math.random() - 0.5);
+                        return shuffled.slice(0, n);
+                    }
+                    
+                    // Wybierz losowe elementy z każdej kategorii
+                    selectedItems = [
+                        ...getRandomItems(aktywaTrwale, itemsPerCategory),
+                        ...getRandomItems(aktywaObrotowe, itemsPerCategory),
+                        ...getRandomItems(kapitalWlasny, itemsPerCategory),
+                        ...getRandomItems(zobowiazania, itemsPerCategory)
+                    ];
+                    
+                    // Ogranicz do żądanej liczby elementów
+                    selectedItems = selectedItems.slice(0, itemsCount);
+                } else {
+                    // Całkowicie losowe elementy ze wszystkich kategorii
+                    const shuffledItems = [...bilansItems].sort(() => Math.random() - 0.5);
+                    selectedItems = shuffledItems.slice(0, itemsCount);
+                }
+                
+                // Ponownie pomieszaj elementy, aby nie były pogrupowane kategoriami
+                const shuffledItems = selectedItems.sort(() => Math.random() - 0.5);
+                
                 // Dodanie elementów do przeciągnięcia
-                const shuffledItems = [...exercise.items].sort(() => Math.random() - 0.5);
                 shuffledItems.forEach(item => {
                     const itemElement = document.createElement('div');
                     itemElement.id = item.id;
@@ -365,12 +496,11 @@
                 });
                 
                 // Aktualizacja licznika punktów
-                totalPoints += exercise.items.length;
+                totalPoints = shuffledItems.length;
                 totalPointsDisplay.textContent = totalPoints;
                 
                 // Resetowanie przycisków
                 checkBtn.disabled = false;
-                nextBtn.disabled = true;
             }
             
             // Obsługa przeciągania - start
@@ -523,65 +653,27 @@
                 currentScore += correctCount;
                 scoreDisplay.textContent = currentScore;
                 
-                // Dezaktywacja przycisku sprawdzania i aktywacja przycisku następnego ćwiczenia
+                // Dezaktywacja przycisku sprawdzania
                 this.disabled = true;
-                nextBtn.disabled = false;
             });
             
-            // Przejście do następnego ćwiczenia
-            nextBtn.addEventListener('click', function() {
-                currentExerciseIndex++;
-                
-                if (currentExerciseIndex < exercises.length) {
-                    initExercise(currentExerciseIndex);
-                } else {
-                    // Wszystkie ćwiczenia ukończone
-                    itemsContainer.innerHTML = '';
-                    exerciseTitle.textContent = "Gratulacje! Ukończyłeś wszystkie ćwiczenia.";
-                    
-                    const resultMessage = document.createElement('div');
-                    resultMessage.className = 'text-center p-6';
-                    
-                    const percentage = Math.round((currentScore / totalPoints) * 100);
-                    
-                    resultMessage.innerHTML = `
-                        <p class="text-2xl text-purple-600 mb-4">Twój wynik: ${currentScore} / ${totalPoints} (${percentage}%)</p>
-                        <p class="text-gray-700 mb-6">Możesz zresetować ćwiczenia, aby spróbować ponownie lub przejść do kolejnego trybu nauki.</p>
-                        <div class="flex justify-center gap-4">
-                            <button id="restart-btn" class="btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500">
-                                <i class="fas fa-redo mr-2"></i> Zresetuj wszystkie ćwiczenia
-                            </button>
-                            <a href="tryb-quiz.html" class="btn-kawaii">
-                                Przejdź do trybu quizu <i class="fas fa-arrow-right ml-2"></i>
-                            </a>
-                        </div>
-                    `;
-                    
-                    itemsContainer.appendChild(resultMessage);
-                    
-                    document.getElementById('restart-btn').addEventListener('click', function() {
-                        currentExerciseIndex = 0;
-                        currentScore = 0;
-                        totalPoints = 0;
-                        scoreDisplay.textContent = currentScore;
-                        totalPointsDisplay.textContent = totalPoints;
-                        initExercise(currentExerciseIndex);
-                    });
-                    
-                    // Ukrycie przycisków nawigacji ćwiczeniami
-                    checkBtn.style.display = 'none';
-                    nextBtn.style.display = 'none';
-                    resetBtn.style.display = 'none';
-                }
-            });
-            
-            // Resetowanie bieżącego ćwiczenia
+            // Resetowanie ćwiczenia i losowanie nowych elementów
             resetBtn.addEventListener('click', function() {
-                initExercise(currentExerciseIndex);
+                initExercise();
             });
             
             // Inicjalizacja pierwszego ćwiczenia
-            initExercise(currentExerciseIndex);
+            initExercise();
+            
+            // Dodanie obsługi zmiany liczby elementów
+            itemsCountSelect.addEventListener('change', function() {
+                initExercise();
+            });
+            
+            // Dodanie obsługi zmiany trybu wyboru elementów
+            balancedCategoriesCheckbox.addEventListener('change', function() {
+                initExercise();
+            });
         });
     </script>
 </body>
