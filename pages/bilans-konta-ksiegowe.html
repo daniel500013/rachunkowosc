@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nauka Bilansu - Konta księgowe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff5f9;
+        }
+        h1, h2, h3 {
+            font-family: 'Pacifico', cursive;
+        }
+        .kawaii-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #ff99cc, #ff80bf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .btn-kawaii {
+            background: linear-gradient(45deg, #ff99cc, #ff66b3);
+            border-radius: 50px;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 4px 6px rgba(255, 153, 204, 0.3);
+            transition: all 0.3s;
+        }
+        .btn-kawaii:hover {
+            box-shadow: 0 6px 8px rgba(255, 153, 204, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        .btn-secondary {
+            background: linear-gradient(45deg, #a0aec0, #718096);
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #48bb78, #38a169);
+        }
+        .btn-danger {
+            background: linear-gradient(45deg, #f56565, #e53e3e);
+        }
+        .konto {
+            border: 2px solid #ffcce6;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(255, 153, 204, 0.1);
+            transition: all 0.3s;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .konto:hover {
+            box-shadow: 0 8px 15px rgba(255, 153, 204, 0.2);
+        }
+        .konto-header {
+            background-color: #fff0f8;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #ffcce6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .konto-title {
+            font-weight: 600;
+            color: #ff66b3;
+        }
+        .konto-type {
+            font-size: 0.875rem;
+            color: #718096;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            background-color: white;
+        }
+        .konto-type.aktywa {
+            color: #38a169;
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+        }
+        .konto-type.pasywa {
+            color: #e53e3e;
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+        }
+        .konto-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .konto-column {
+            padding: 1rem;
+            min-height: 100px;
+        }
+        .konto-column-header {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .konto-entry {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f7fafc;
+        }
+        .konto-entry-description {
+            font-size: 0.875rem;
+            color: #4a5568;
+            flex-grow: 1;
+        }
+        .konto-entry-amount {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .konto-column.wn {
+            border-right: 1px dashed #edf2f7;
+        }
+        .konto-footer {
+            background-color: #f7fafc;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid #edf2f7;
+        }
+        .konto-footer-label {
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+        .konto-footer-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .ledger-header {
+            background-color: #4a5568;
+            color: white;
+            padding: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .ledger-cell {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+        }
+        .ledger-row:nth-child(odd) {
+            background-color: #f7fafc;
+        }
+        .account-select {
+            border: 2px solid #ffcce6;
+            border-radius: 8px;
+            padding: 0.5rem;
+            width: 100%;
+            color: #4a5568;
+            background-color: white;
+        }
+        .account-input {
+            border: 2px solid #ffcce6;
+            border-radius: 8px;
+            padding: 0.5rem;
+            width: 100%;
+            color: #4a5568;
+        }
+        .entry-form {
+            background-color: white;
+            border: 2px solid #ffcce6;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(255, 153, 204, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .note-card {
+            background-color: #fffaf0;
+            border: 1px solid #feebc8;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .note-card-title {
+            font-weight: 600;
+            color: #dd6b20;
+            margin-bottom: 0.5rem;
+        }
+        .note-card-content {
+            color: #4a5568;
+            font-size: 0.875rem;
+        }
+        .accounting-description {
+            padding: 1rem;
+            background-color: white;
+            border: 2px solid #edf2f7;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .verification-item {
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        .verification-item.correct {
+            background-color: #f0fff4;
+            border: 1px solid #c6f6d5;
+        }
+        .verification-item.incorrect {
+            background-color: #fff5f5;
+            border: 1px solid #fed7d7;
+        }
+        .verification-item-icon {
+            margin-right: 0.75rem;
+            font-size: 1.125rem;
+        }
+        .verification-item-icon.correct {
+            color: #38a169;
+        }
+        .verification-item-icon.incorrect {
+            color: #e53e3e;
+        }
+        .verification-item-content {
+            flex-grow: 1;
+        }
+        .verification-summary {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .verification-summary.correct {
+            background-color: #f0fff4;
+            color: #38a169;
+        }
+        .verification-summary.incorrect {
+            background-color: #fff5f5;
+            color: #e53e3e;
+        }
+        .verification-summary.partial {
+            background-color: #fffaf0;
+            color: #dd6b20;
+        }
+        @media (max-width: 768px) {
+            .konto-body {
+                grid-template-columns: 1fr;
+            }
+            .konto-column.wn {
+                border-right: none;
+                border-bottom: 1px dashed #edf2f7;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Nagłówek -->
+    <header class="bg-gradient-to-r from-pink-400 to-pink-600 text-white py-8 shadow-lg relative overflow-hidden">
+        <div class="container mx-auto px-4 relative z-10">
+            <h1 class="text-3xl md:text-4xl text-center">✨ Nauka Bilansu ✨</h1>
+            <p class="text-center mt-2 text-white font-light">Konta księgowe i zasada podwójnego zapisu</p>
+        </div>
+    </header>
+
+    <!-- Nawigacja -->
+    <nav class="bg-white py-4 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap justify-between items-center">
+                <a href="index.html" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">
+                    <i class="fas fa-home mr-2"></i> Strona główna
+                </a>
+                <div class="flex flex-wrap">
+                    <a href="#" class="text-pink-600 mx-2 font-semibold">Konta księgowe</a>
+                    <a href="#" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">Dziennik</a>
+                    <a href="#" class="text-gray-600 mx-2 hover:text-pink-600 mb-2 md:mb-0">Zestawienie</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Główna zawartość -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Zadanie -->
+        <section class="mb-8">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
+                <h2 class="text-2xl md:text-3xl text-purple-600 text-center mb-6">Zadanie 8</h2>
+                
+                <div class="accounting-description text-gray-700">
+                    <p class="mb-4">W przedsiębiorstwie prowadzącym działalność handlowo-usługową salda początkowe wybranych kont były następujące: materiały 4 500, kredyt krótkoterminowy 10 000, należności od odbiorców 5 800, towary 21 000, rachunek bankowy 3 000.</p>
+                    <p>W bieżącym okresie w jednostce miały miejsce następujące operacje gospodarcze:</p>
+                    
+                    <div class="overflow-x-auto mt-4">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                                <tr>
+                                    <th class="ledger-header w-16">Lp.</th>
+                                    <th class="ledger-header">Treść operacji gospodarczej</th>
+                                    <th class="ledger-header w-24">Kwota</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="ledger-row">
+                                    <td class="ledger-cell text-center">1.</td>
+                                    <td class="ledger-cell">Wydano do zużycia materiały</td>
+                                    <td class="ledger-cell text-right">1 800</td>
+                                </tr>
+                                <tr class="ledger-row">
+                                    <td class="ledger-cell text-center">2.</td>
+                                    <td class="ledger-cell">Otrzymano fakturę za naprawę samochodu dostawczego</td>
+                                    <td class="ledger-cell text-right">4 200</td>
+                                </tr>
+                                <tr class="ledger-row">
+                                    <td class="ledger-cell text-center">3.</td>
+                                    <td class="ledger-cell">Sprzedano towary:<br>
+                                        a) wystawiono fakturę na kwotę<br>
+                                        b) wydano odbiorcy z magazynu sprzedane towary, ich wartość w cenie nabycia</td>
+                                    <td class="ledger-cell text-right">32 000<br>15 000</td>
+                                </tr>
+                                <tr class="ledger-row">
+                                    <td class="ledger-cell text-center">4.</td>
+                                    <td class="ledger-cell">Naliczono wynagrodzenia brutto dla pracowników według listy płac</td>
+                                    <td class="ledger-cell text-right">28 000</td>
+                                </tr>
+                                <tr class="ledger-row">
+                                    <td class="ledger-cell text-center">5.</td>
+                                    <td class="ledger-cell">Bank doliczył odsetki od środków zgromadzonych na rachunku bieżącym</td>
+                                    <td class="ledger-cell text-right">100</td>
+                                </tr>
+                                <tr class="ledger-row">
+                                    <td class="ledger-cell text-center">6.</td>
+                                    <td class="ledger-cell">Zapłacono przelewem odsetki od kredytu</td>
+                                    <td class="ledger-cell text-right">320</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <p class="mt-4">Na podstawie przedstawionych informacji otwórz konta, zadekreuj i zaksięguj operacje gospodarcze, dokonaj przeksięgowań ustalając wynik finansowy, który jednostka osiągnie w bieżącym okresie.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Instrukcja -->
+        <section class="mb-8">
+            <div class="note-card">
+                <div class="note-card-title"><i class="fas fa-info-circle mr-2"></i>Jak korzystać z narzędzia?</div>
+                <div class="note-card-content">
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>Dodaj konta za pomocą przycisku "Dodaj konto" - wprowadź nazwę konta i wybierz czy to aktywa czy pasywa.</li>
+                        <li>Dla każdej operacji gospodarczej dodaj min. dwa konta, aby zachować zasadę podwójnego zapisu.</li>
+                        <li>Wprowadź kwoty po odpowiednich stronach kont zgodnie z zasadą: aktywa + po stronie Wn, pasywa + po stronie Ma.</li>
+                        <li>Pamiętaj o bilansie - suma zapisów po stronie Wn musi równać się sumie zapisów po stronie Ma.</li>
+                        <li>Możesz korzystać z formularza poniżej, aby księgować operacje na wielu kontach jednocześnie.</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formularz dodawania kont -->
+        <section class="mb-8">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
+                <h3 class="text-xl text-purple-600 mb-6">Tworzenie kont</h3>
+                
+                <div class="flex flex-wrap gap-4 mb-6">
+                    <div class="w-full md:w-64">
+                        <label for="account-name" class="form-label">Nazwa konta</label>
+                        <input type="text" id="account-name" class="account-input" placeholder="np. Rachunek bankowy">
+                    </div>
+                    
+                    <div class="w-full md:w-48">
+                        <label for="account-type" class="form-label">Typ konta</label>
+                        <select id="account-type" class="account-select">
+                            <option value="aktywa">Aktywa</option>
+                            <option value="pasywa">Pasywa</option>
+                        </select>
+                    </div>
+                    
+                    <div class="w-full md:w-36 flex items-end">
+                        <button id="add-account-btn" class="btn-kawaii w-full">
+                            <i class="fas fa-plus mr-2"></i> Dodaj konto
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h4 class="font-semibold text-gray-700 mb-2">Podgląd istniejących kont:</h4>
+                    <div id="account-list" class="flex flex-wrap gap-2">
+                        <!-- Lista kont będzie generowana przez JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formularz operacji gospodarczej -->
+        <section class="mb-8">
+            <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-purple-200">
+                <h3 class="text-xl text-purple-600 mb-6">Księgowanie operacji gospodarczej</h3>
+                
+                <div class="entry-form">
+                    <div class="form-group">
+                        <label for="operation-description" class="form-label">Opis operacji gospodarczej</label>
+                        <input type="text" id="operation-description" class="account-input" placeholder="np. Wydano do zużycia materiały">
+                    </div>
+
+                    <div id="entry-rows">
+                        <div class="entry-row grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+                            <div>
+                                <label class="form-label">Konto</label>
+                                <select class="account-select entry-account">
+                                    <option value="">Wybierz konto</option>
+                                    <!-- Opcje będą dodawane przez JavaScript -->
+                                </select>
+                            </div>
+                            <div>
+                                <label class="form-label">Strona Wn</label>
+                                <input type="number" class="account-input entry-debit" placeholder="0.00">
+                            </div>
+                            <div>
+                                <label class="form-label">Strona Ma</label>
+                                <input type="number" class="account-input entry-credit" placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between mb-4">
+                        <button id="add-entry-row-btn" class="btn-kawaii btn-sm btn-secondary">
+                            <i class="fas fa-plus mr-2"></i> Dodaj wiersz
+                        </button>
+                        
+                        <div class="text-right">
+                            <div class="text-sm text-gray-600 mb-1">Bilans operacji:</div>
+                            <div id="operation-balance" class="font-semibold">Wn: 0.00 = Ma: 0.00</div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button id="post-operation-btn" class="btn-kawaii btn-success">
+                            <i class="fas fa-check mr-2"></i> Zaksięguj operację
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sekcja z kontami -->
+        <section class="mb-8">
+            <h3 class="text-xl text-purple-600 mb-6">Konta księgowe</h3>
+            
+            <div id="accounts-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Konta będą dodawane przez JavaScript -->
+            </div>
+            
+            <div class="flex justify-center mt-8">
+                <button id="verify-task-btn" class="btn-kawaii bg-gradient-to-r from-indigo-500 to-indigo-700">
+                    <i class="fas fa-check-double mr-2"></i> Zweryfikuj zadanie
+                </button>
+            </div>
+            
+            <div id="verification-results" class="mt-6 p-6 bg-white rounded-xl border-2 border-indigo-200 hidden">
+                <h4 class="text-lg font-semibold text-indigo-700 mb-3"><i class="fas fa-clipboard-check mr-2"></i> Wyniki weryfikacji</h4>
+                <div id="verification-content" class="space-y-3">
+                    <!-- Wyniki weryfikacji będą dodawane przez JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Stopka -->
+    <footer class="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="mb-4">
+                <span class="inline-block mx-1">🌸</span>
+                <span class="inline-block mx-1">💜</span>
+                <span class="inline-block mx-1">🎀</span>
+                <span class="inline-block mx-1">✨</span>
+                <span class="inline-block mx-1">💫</span>
+            </div>
+            <p>&copy; 2025 Nauka Bilansu - Projekt edukacyjny</p>
+            <p class="text-purple-200 mt-2 text-sm">Strona stworzona w celach edukacyjnych</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dane kont
+            let accounts = [];
+            let entries = [];
+            
+            // Referencje do elementów DOM
+            const accountNameInput = document.getElementById('account-name');
+            const accountTypeSelect = document.getElementById('account-type');
+            const addAccountBtn = document.getElementById('add-account-btn');
+            const accountListDiv = document.getElementById('account-list');
+            const accountsContainer = document.getElementById('accounts-container');
+            
+            const operationDescriptionInput = document.getElementById('operation-description');
+            const entryRowsContainer = document.getElementById('entry-rows');
+            const addEntryRowBtn = document.getElementById('add-entry-row-btn');
+            const operationBalanceDisplay = document.getElementById('operation-balance');
+            const postOperationBtn = document.getElementById('post-operation-btn');
+            
+            // Funkcja do tworzenia ID konta (bez spacji, tylko małe litery)
+            function createAccountId(name) {
+                return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            }
+            
+            // Funkcja aktualizująca listę kont
+            function updateAccountList() {
+                accountListDiv.innerHTML = '';
+                
+                if (accounts.length === 0) {
+                    accountListDiv.innerHTML = '<span class="text-gray-500 italic">Brak utworzonych kont</span>';
+                    return;
+                }
+                
+                accounts.forEach(account => {
+                    const badge = document.createElement('span');
+                    badge.className = `inline-block px-3 py-1 rounded-full text-sm font-medium ${account.type === 'aktywa' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+                    badge.textContent = account.name;
+                    accountListDiv.appendChild(badge);
+                });
+                
+                // Aktualizacja opcji w selektach kont
+                updateAccountSelects();
+            }
+            
+            // Funkcja aktualizująca selecty z kontami
+            function updateAccountSelects() {
+                document.querySelectorAll('.entry-account').forEach(select => {
+                    const currentValue = select.value;
+                    select.innerHTML = '<option value="">Wybierz konto</option>';
+                    
+                    accounts.forEach(account => {
+                        const option = document.createElement('option');
+                        option.value = account.id;
+                        option.textContent = account.name + ` (${account.type})`;
+                        select.appendChild(option);
+                    });
+                    
+                    // Przywracamy poprzednią wartość, jeśli istniała
+                    if (currentValue && select.querySelector(`option[value="${currentValue}"]`)) {
+                        select.value = currentValue;
+                    }
+                });
+            }
+            
+            // Funkcja dodająca nowy wiersz wpisu
+            function addEntryRow() {
+                const row = document.createElement('div');
+                row.className = 'entry-row grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 p-4 bg-gray-50 rounded-lg';
+                row.innerHTML = `
+                    <div>
+                        <label class="form-label">Konto</label>
+                        <select class="account-select entry-account">
+                            <option value="">Wybierz konto</option>
+                            ${accounts.map(account => `<option value="${account.id}">${account.name} (${account.type})</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Strona Wn</label>
+                        <input type="number" class="account-input entry-debit" placeholder="0.00">
+                    </div>
+                    <div>
+                        <label class="form-label">Strona Ma</label>
+                        <input type="number" class="account-input entry-credit" placeholder="0.00">
+                    </div>
+                `;
+                
+                // Dodanie przycisku usunięcia wiersza
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'btn-kawaii btn-sm btn-danger absolute top-2 right-2';
+                deleteButton.innerHTML = '<i class="fas fa-times"></i>';
+                deleteButton.addEventListener('click', function() {
+                    row.remove();
+                    updateOperationBalance();
+                });
+                
+                // Pozycjonowanie przycisku usunięcia
+                row.style.position = 'relative';
+                row.appendChild(deleteButton);
+                
+                // Dodajemy obsługę zdarzeń dla pól kwot
+                row.querySelectorAll('input[type="number"]').forEach(input => {
+                    input.addEventListener('input', updateOperationBalance);
+                });
+                
+                entryRowsContainer.appendChild(row);
+            }
+            
+            // Funkcja aktualizująca bilans operacji
+            function updateOperationBalance() {
+                let totalDebit = 0;
+                let totalCredit = 0;
+                
+                entryRowsContainer.querySelectorAll('.entry-row').forEach(row => {
+                    const debitInput = row.querySelector('.entry-debit');
+                    const creditInput = row.querySelector('.entry-credit');
+                    
+                    if (debitInput.value) {
+                        totalDebit += parseFloat(debitInput.value);
+                    }
+                    
+                    if (creditInput.value) {
+                        totalCredit += parseFloat(creditInput.value);
+                    }
+                });
+                
+                operationBalanceDisplay.textContent = `Wn: ${totalDebit.toFixed(2)} = Ma: ${totalCredit.toFixed(2)}`;
+                
+                // Dodajemy klasę błędu jeśli bilans się nie zgadza
+                if (totalDebit !== totalCredit) {
+                    operationBalanceDisplay.classList.add('text-red-600');
+                    operationBalanceDisplay.classList.remove('text-green-600');
+                    postOperationBtn.disabled = true;
+                    postOperationBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                } else {
+                    operationBalanceDisplay.classList.remove('text-red-600');
+                    operationBalanceDisplay.classList.add('text-green-600');
+                    postOperationBtn.disabled = false;
+                    postOperationBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
+            }
+            
+            // Funkcja dodająca nowe konto
+            function addAccount(name, type) {
+                const accountId = createAccountId(name);
+                
+                // Sprawdzenie czy konto już istnieje
+                if (accounts.some(acc => acc.id === accountId)) {
+                    alert('Konto o tej nazwie już istnieje!');
+                    return;
+                }
+                
+                // Dodanie konta do tablicy
+                accounts.push({
+                    id: accountId,
+                    name: name,
+                    type: type,
+                    entries: []
+                });
+                
+                // Aktualizacja UI
+                updateAccountList();
+                renderAccounts();
+                
+                // Wyczyszczenie pól formularza
+                accountNameInput.value = '';
+            }
+            
+            // Funkcja renderująca konta
+            function renderAccounts() {
+                accountsContainer.innerHTML = '';
+                
+                if (accounts.length === 0) {
+                    accountsContainer.innerHTML = '<div class="col-span-full text-center p-8 bg-white rounded-xl border-2 border-dashed border-gray-300"><span class="text-gray-500">Nie utworzono jeszcze żadnych kont. Użyj formularza powyżej.</span></div>';
+                    return;
+                }
+                
+                accounts.forEach(account => {
+                    // Obliczenie sum dla stron Wn i Ma
+                    let totalDebit = 0;
+                    let totalCredit = 0;
+                    
+                    account.entries.forEach(entry => {
+                        if (entry.debit) totalDebit += entry.debit;
+                        if (entry.credit) totalCredit += entry.credit;
+                    });
+                    
+                    // Obliczenie salda
+                    let balanceType = '';
+                    let balanceValue = 0;
+                    
+                    if (totalDebit > totalCredit) {
+                        balanceType = 'Wn';
+                        balanceValue = totalDebit - totalCredit;
+                    } else if (totalCredit > totalDebit) {
+                        balanceType = 'Ma';
+                        balanceValue = totalCredit - totalDebit;
+                    }
+                    
+                    // Tworzenie elementu konta
+                    const kontoElement = document.createElement('div');
+                    kontoElement.className = 'konto';
+                    kontoElement.innerHTML = `
+                        <div class="konto-header">
+                            <div class="konto-title">${account.name}</div>
+                            <div class="konto-type ${account.type}">${account.type === 'aktywa' ? 'Aktywa' : 'Pasywa'}</div>
+                        </div>
+                        <div class="konto-body">
+                            <div class="konto-column wn">
+                                <div class="konto-column-header">Wn</div>
+                                ${account.entries.map(entry => 
+                                    entry.debit ? `
+                                        <div class="konto-entry">
+                                            <div class="konto-entry-description">${entry.description || ''}</div>
+                                            <div class="konto-entry-amount">${entry.debit.toFixed(2)}</div>
+                                        </div>
+                                    ` : ''
+                                ).join('')}
+                            </div>
+                            <div class="konto-column ma">
+                                <div class="konto-column-header">Ma</div>
+                                ${account.entries.map(entry => 
+                                    entry.credit ? `
+                                        <div class="konto-entry">
+                                            <div class="konto-entry-description">${entry.description || ''}</div>
+                                            <div class="konto-entry-amount">${entry.credit.toFixed(2)}</div>
+                                        </div>
+                                    ` : ''
+                                ).join('')}
+                            </div>
+                        </div>
+                        <div class="konto-footer">
+                            <div>
+                                <span class="konto-footer-label">Suma Wn:</span>
+                                <span class="konto-footer-value">${totalDebit.toFixed(2)}</span>
+                            </div>
+                            <div>
+                                <span class="konto-footer-label">Suma Ma:</span>
+                                <span class="konto-footer-value">${totalCredit.toFixed(2)}</span>
+                            </div>
+                            <div>
+                                <span class="konto-footer-label">Saldo:</span>
+                                <span class="konto-footer-value">${balanceValue > 0 ? balanceValue.toFixed(2) + ' ' + balanceType : '0.00'}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    accountsContainer.appendChild(kontoElement);
+                });
+            }
+            
+            // Funkcja księgująca operację
+            function postOperation() {
+                const description = operationDescriptionInput.value;
+                
+                if (!description) {
+                    alert('Wprowadź opis operacji gospodarczej!');
+                    return;
+                }
+                
+                let hasEntries = false;
+                
+                // Zbieramy dane z formularza
+                entryRowsContainer.querySelectorAll('.entry-row').forEach(row => {
+                    const accountSelect = row.querySelector('.entry-account');
+                    const debitInput = row.querySelector('.entry-debit');
+                    const creditInput = row.querySelector('.entry-credit');
+                    
+                    const accountId = accountSelect.value;
+                    const debitValue = debitInput.value ? parseFloat(debitInput.value) : 0;
+                    const creditValue = creditInput.value ? parseFloat(creditInput.value) : 0;
+                    
+                    if (accountId && (debitValue > 0 || creditValue > 0)) {
+                        hasEntries = true;
+                        
+                        // Znajdujemy konto
+                        const account = accounts.find(acc => acc.id === accountId);
+                        
+                        if (account) {
+                            // Dodajemy wpis do konta
+                            account.entries.push({
+                                description: description,
+                                debit: debitValue,
+                                credit: creditValue,
+                                timestamp: new Date()
+                            });
+                        }
+                    }
+                });
+                
+                if (!hasEntries) {
+                    alert('Wprowadź co najmniej jeden wpis!');
+                    return;
+                }
+                
+                // Aktualizacja UI
+                renderAccounts();
+                
+                // Czyszczenie formularza
+                operationDescriptionInput.value = '';
+                entryRowsContainer.innerHTML = '';
+                addEntryRow(); // Dodajemy jeden pusty wiersz
+                updateOperationBalance();
+            }
+            
+            // Inicjalizacja - dodanie początkowych kont salda
+            function initializeAccounts() {
+                // Dodajemy konta z saldami początkowymi
+                addAccount('Materiały', 'aktywa');
+                addAccount('Kredyt krótkoterminowy', 'pasywa');
+                addAccount('Należności od odbiorców', 'aktywa');
+                addAccount('Towary', 'aktywa');
+                addAccount('Rachunek bankowy', 'aktywa');
+                
+                // Dodajemy konta bez sald początkowych
+                addAccount('Zużycie materiałów', 'aktywa');
+                addAccount('Usługi obce', 'aktywa');
+                addAccount('Przychody ze sprzedaży', 'pasywa');
+                addAccount('Wynagrodzenia', 'aktywa');
+                addAccount('Przychody finansowe', 'pasywa');
+                addAccount('Koszty finansowe', 'aktywa');
+                
+                // Wprowadzamy salda początkowe
+                const materialyAccount = accounts.find(acc => acc.id === 'materialy');
+                const kredytAccount = accounts.find(acc => acc.id === 'kredyt-krotkoterminowy');
+                const naleznosciAccount = accounts.find(acc => acc.id === 'naleznosci-od-odbiorcow');
+                const towaryAccount = accounts.find(acc => acc.id === 'towary');
+                const rachunekAccount = accounts.find(acc => acc.id === 'rachunek-bankowy');
+                
+                materialyAccount.entries.push({
+                    description: 'Bilans otwarcia',
+                    debit: 4500,
+                    credit: 0,
+                    timestamp: new Date()
+                });
+                
+                kredytAccount.entries.push({
+                    description: 'Bilans otwarcia',
+                    debit: 0,
+                    credit: 10000,
+                    timestamp: new Date()
+                });
+                
+                naleznosciAccount.entries.push({
+                    description: 'Bilans otwarcia',
+                    debit: 5800,
+                    credit: 0,
+                    timestamp: new Date()
+                });
+                
+                towaryAccount.entries.push({
+                    description: 'Bilans otwarcia',
+                    debit: 21000,
+                    credit: 0,
+                    timestamp: new Date()
+                });
+                
+                rachunekAccount.entries.push({
+                    description: 'Bilans otwarcia',
+                    debit: 3000,
+                    credit: 0,
+                    timestamp: new Date()
+                });
+                
+                renderAccounts();
+            }
+            
+            // Obsługa wydarzeń
+            addAccountBtn.addEventListener('click', () => {
+                const name = accountNameInput.value.trim();
+                const type = accountTypeSelect.value;
+                
+                if (name) {
+                    addAccount(name, type);
+                } else {
+                    alert('Wprowadź nazwę konta!');
+                }
+            });
+            
+            addEntryRowBtn.addEventListener('click', addEntryRow);
+            
+            postOperationBtn.addEventListener('click', postOperation);
+            
+            // Inicjalizacja
+            addEntryRow();
+            initializeAccounts();
+            
+            // Funkcja weryfikująca zadanie
+            function verifyTask() {
+                const verificationResults = document.getElementById('verification-results');
+                const verificationContent = document.getElementById('verification-content');
+                
+                // Pokazujemy sekcję wyników
+                verificationResults.classList.remove('hidden');
+                verificationContent.innerHTML = '';
+                
+                // Dodajemy nagłówek z informacją o weryfikacji
+                const verificationHeader = document.createElement('div');
+                verificationHeader.className = 'mb-4 text-lg font-semibold text-gray-700';
+                verificationHeader.innerHTML = '<i class="fas fa-search mr-2"></i> Sprawdzam poprawność księgowań...';
+                verificationContent.appendChild(verificationHeader);
+                
+                // Sprawdzanie operacji z zadania
+                let correctOperations = 0;
+                let totalOperations = 7; // Liczba operacji w zadaniu
+                let missingOperations = [];
+                
+                // Tablica oczekiwanych operacji - [opis, konto1, strona1, kwota1, konto2, strona2, kwota2, ...]
+                // Gdzie strona: 'debit' lub 'credit'
+                const expectedOperations = [
+                    {
+                        description: 'Wydano do zużycia materiały',
+                        entries: [
+                            { account: 'zużycie-materiałów', side: 'debit', amount: 1800 },
+                            { account: 'materiały', side: 'credit', amount: 1800 }
+                        ]
+                    },
+                    {
+                        description: 'Otrzymano fakturę za naprawę samochodu dostawczego',
+                        entries: [
+                            { account: 'usługi-obce', side: 'debit', amount: 4200 },
+                            { account: 'zobowiązania', side: 'credit', amount: 4200 }
+                        ]
+                    },
+                    {
+                        description: 'Sprzedano towary - faktura',
+                        entries: [
+                            { account: 'należności-od-odbiorców', side: 'debit', amount: 32000 },
+                            { account: 'przychody-ze-sprzedaży', side: 'credit', amount: 32000 }
+                        ]
+                    },
+                    {
+                        description: 'Sprzedano towary - wydanie z magazynu',
+                        entries: [
+                            { account: 'koszt-własny-sprzedaży', side: 'debit', amount: 15000 },
+                            { account: 'towary', side: 'credit', amount: 15000 }
+                        ]
+                    },
+                    {
+                        description: 'Naliczono wynagrodzenia brutto dla pracowników',
+                        entries: [
+                            { account: 'wynagrodzenia', side: 'debit', amount: 28000 },
+                            { account: 'zobowiązania', side: 'credit', amount: 28000 }
+                        ]
+                    },
+                    {
+                        description: 'Bank doliczył odsetki',
+                        entries: [
+                            { account: 'rachunek-bankowy', side: 'debit', amount: 100 },
+                            { account: 'przychody-finansowe', side: 'credit', amount: 100 }
+                        ]
+                    },
+                    {
+                        description: 'Zapłacono odsetki od kredytu',
+                        entries: [
+                            { account: 'koszty-finansowe', side: 'debit', amount: 320 },
+                            { account: 'rachunek-bankowy', side: 'credit', amount: 320 }
+                        ]
+                    }
+                ];
+                
+                // Sprawdzamy, czy dla każdej oczekiwanej operacji istnieją odpowiednie wpisy
+                expectedOperations.forEach(operation => {
+                    let operationFound = false;
+                    let entriesMatched = 0;
+                    let matchedAccounts = [];
+                    let missingEntries = [];
+                    
+                    // Szukamy dopasowań dla wpisów w operacji
+                    operation.entries.forEach(expectedEntry => {
+                        let entryFound = false;
+                        
+                        // Szukamy konta
+                        const account = accounts.find(acc => 
+                            acc.id.toLowerCase() === expectedEntry.account.toLowerCase() || 
+                            acc.name.toLowerCase().includes(expectedEntry.account.toLowerCase())
+                        );
+                        
+                        if (account) {
+                            // Szukamy wpisu o określonej kwocie
+                            const entryMatched = account.entries.some(entry => {
+                                if (expectedEntry.side === 'debit' && entry.debit === expectedEntry.amount) {
+                                    return true;
+                                }
+                                if (expectedEntry.side === 'credit' && entry.credit === expectedEntry.amount) {
+                                    return true;
+                                }
+                                return false;
+                            });
+                            
+                            if (entryMatched) {
+                                entriesMatched++;
+                                matchedAccounts.push(account.name);
+                                entryFound = true;
+                            }
+                        }
+                        
+                        if (!entryFound) {
+                            missingEntries.push({
+                                account: expectedEntry.account,
+                                side: expectedEntry.side === 'debit' ? 'Wn' : 'Ma',
+                                amount: expectedEntry.amount
+                            });
+                        }
+                    });
+                    
+                    // Jeśli znaleziono wszystkie wpisy, operacja jest zaliczona
+                    if (entriesMatched === operation.entries.length) {
+                        operationFound = true;
+                        correctOperations++;
+                    } else {
+                        missingOperations.push({
+                            description: operation.description,
+                            missing: missingEntries
+                        });
+                    }
+                    
+                    // Dodajemy wynik weryfikacji do sekcji wyników
+                    const verificationItem = document.createElement('div');
+                    verificationItem.className = `verification-item ${operationFound ? 'correct' : 'incorrect'}`;
+                    
+                    let missingEntriesHtml = '';
+                    if (missingEntries.length > 0) {
+                        missingEntriesHtml = `
+                            <div class="mt-2 p-2 bg-red-50 rounded-md text-sm">
+                                <div class="font-semibold text-red-800 mb-1">Brakujące księgowania:</div>
+                                <ul class="list-disc list-inside">
+                                    ${missingEntries.map(entry => 
+                                        `<li>Konto: <span class="font-medium">${entry.account}</span>, 
+                                        Strona: <span class="font-medium">${entry.side}</span>, 
+                                        Kwota: <span class="font-medium">${entry.amount.toFixed(2)}</span></li>`
+                                    ).join('')}
+                                </ul>
+                            </div>
+                        `;
+                    }
+                    
+                    verificationItem.innerHTML = `
+                        <div class="verification-item-icon ${operationFound ? 'correct' : 'incorrect'}">
+                            <i class="fas ${operationFound ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+                        </div>
+                        <div class="verification-item-content">
+                            <div class="font-semibold mb-1">${operation.description}</div>
+                            <div class="text-sm text-gray-600">
+                                ${operationFound 
+                                    ? `<span class="text-green-600">Znaleziono poprawne księgowania na kontach: ${matchedAccounts.join(', ')}</span>`
+                                    : `<span class="text-red-600">Niepoprawnie zaksięgowana operacja!</span>`
+                                }
+                            </div>
+                            ${missingEntriesHtml}
+                        </div>
+                    `;
+                    
+                    verificationContent.appendChild(verificationItem);
+                });
+                
+                // Dodajemy podsumowanie
+                const summaryClass = correctOperations === totalOperations 
+                    ? 'correct' 
+                    : (correctOperations > 0 ? 'partial' : 'incorrect');
+                
+                const verificationSummary = document.createElement('div');
+                verificationSummary.className = `verification-summary ${summaryClass}`;
+                
+                if (correctOperations === totalOperations) {
+                    verificationSummary.innerHTML = `
+                        <i class="fas fa-trophy mr-2"></i> Gratulacje! Wszystkie operacje zostały poprawnie zaksięgowane.
+                    `;
+                } else {
+                    verificationSummary.innerHTML = `
+                        <i class="fas fa-exclamation-triangle mr-2"></i> 
+                        Uwaga! Znaleziono ${correctOperations} z ${totalOperations} oczekiwanych operacji.
+                        <div class="mt-2 text-sm">
+                            Należy poprawić brakujące lub niepoprawne księgowania.
+                        </div>
+                    `;
+                }
+                
+                verificationContent.appendChild(verificationSummary);
+                
+                // Jeśli są brakujące operacje, dodajemy wskazówkę
+                if (missingOperations.length > 0) {
+                    const helpTips = document.createElement('div');
+                    helpTips.className = 'mt-4 p-4 bg-blue-50 rounded-md border border-blue-200';
+                    helpTips.innerHTML = `
+                        <div class="font-semibold text-blue-800 mb-2"><i class="fas fa-lightbulb mr-2"></i> Wskazówki do poprawy:</div>
+                        <ul class="list-disc list-inside text-sm text-blue-900 space-y-1">
+                            <li>Upewnij się, że utworzyłeś wszystkie wymagane konta</li>
+                            <li>Sprawdź, czy kwoty są wprowadzone po właściwych stronach kont (Wn/Ma)</li>
+                            <li>Pamiętaj o zasadzie podwójnego zapisu - każda operacja musi mieć co najmniej dwa księgowania</li>
+                            <li>Zgodnie z zasadami rachunkowości: zwiększenie aktywów po stronie Wn, zwiększenie pasywów po stronie Ma</li>
+                        </ul>
+                    `;
+                    verificationContent.appendChild(helpTips);
+                }
+                
+                // Przewijamy do wyników
+                verificationResults.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Dodajemy obsługę przycisku weryfikacji
+            document.getElementById('verify-task-btn').addEventListener('click', verifyTask);
+        });
+    </script>
+</body>
+</html>
