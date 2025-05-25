@@ -141,8 +141,8 @@
             <div class="absolute bottom-0 left-0 w-full h-8 bg-white opacity-20" style="clip-path: polygon(0 100%, 100% 100%, 100% 0, 75% 50%, 50% 0, 25% 50%, 0 0);"></div>
         </div>
         <div class="container mx-auto px-4 relative z-10">
-            <h1 class="text-3xl md:text-4xl text-center">✨ Nauka Bilansu ✨</h1>
-            <p class="text-center mt-2 text-white font-light">Tryb quizu</p>
+            <h1 class="text-3xl md:text-4xl text-center">✨ Quiz Rachunkowości ✨</h1>
+            <p class="text-center mt-2 text-white font-light">Sprawdź swoją wiedzę</p>
         </div>
     </header>
 
@@ -169,24 +169,20 @@
         <!-- Wprowadzenie -->
         <section class="mb-12 quiz-intro">
             <div class="bg-white rounded-3xl shadow-md p-6 md:p-8 border-4 border-pink-200">
-                <h2 class="text-2xl md:text-3xl text-pink-600 text-center mb-6">Quiz z bilansu</h2>
+                <h2 class="text-2xl md:text-3xl text-pink-600 text-center mb-6">Quiz z rachunkowości</h2>
                 <p class="mb-4 text-gray-700">
-                    W tym trybie sprawdzisz swoją wiedzę z zakresu bilansu za pomocą quizu. Quiz składa się z pytań jednokrotnego i wielokrotnego wyboru oraz pytań typu prawda/fałsz.
+                    W tym trybie sprawdzisz swoją wiedzę z zakresu rachunkowości za pomocą quizu. Quiz składa się z pytań jednokrotnego wyboru, które sprawdzą Twoją znajomość podstawowych zagadnień księgowych.
                 </p>
                 <p class="mb-4 text-gray-700">
                     Za każdą poprawną odpowiedź otrzymasz punkty. Po odpowiedzi na pytanie, kliknij przycisk "Sprawdź", aby zobaczyć, czy odpowiedziałeś poprawnie, a następnie przejdź do kolejnego pytania.
                 </p>
                 <p class="text-gray-700">
-                    Możesz rozpocząć quiz od podstawowych pojęć lub wybrać bardziej zaawansowany poziom z menu poniżej.
+                    Quiz zawiera 10 pytań z różnych obszarów rachunkowości. Powodzenia!
                 </p>
                 
-                <div class="mt-8 flex flex-wrap justify-center gap-4">
-                    <button id="start-basic-btn" class="btn-kawaii">
-                        <i class="fas fa-play mr-2"></i> Rozpocznij quiz podstawowy
-                    </button>
-                    
-                    <button id="start-advanced-btn" class="btn-kawaii bg-gradient-to-r from-purple-400 to-purple-500">
-                        <i class="fas fa-star mr-2"></i> Rozpocznij quiz zaawansowany
+                <div class="mt-8 flex justify-center">
+                    <button id="start-quiz-btn" class="btn-kawaii">
+                        <i class="fas fa-play mr-2"></i> Rozpocznij quiz
                     </button>
                 </div>
             </div>
@@ -208,13 +204,6 @@
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 0%"></div>
                     </div>
-                </div>
-                
-                <div>
-                    <select id="difficulty-select" class="border border-pink-200 rounded-full py-2 px-4 bg-white text-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-300">
-                        <option value="basic">Poziom podstawowy</option>
-                        <option value="advanced">Poziom zaawansowany</option>
-                    </select>
                 </div>
             </div>
             
@@ -258,7 +247,7 @@
                         <i class="fas fa-trophy text-5xl text-pink-500"></i>
                     </div>
                     <h3 class="text-xl font-semibold text-gray-800">Gratulacje!</h3>
-                    <p class="text-gray-700">Ukończyłeś quiz z bilansu.</p>
+                    <p class="text-gray-700">Ukończyłeś quiz z rachunkowości.</p>
                 </div>
                 
                 <div class="bg-pink-50 rounded-xl p-6 mb-6">
@@ -285,10 +274,6 @@
                 <div class="flex flex-wrap justify-center gap-4">
                     <button id="restart-quiz-btn" class="btn-kawaii bg-gradient-to-r from-gray-400 to-gray-500">
                         <i class="fas fa-redo mr-2"></i> Rozpocznij quiz ponownie
-                    </button>
-                    
-                    <button id="switch-level-btn" class="btn-kawaii bg-gradient-to-r from-purple-400 to-purple-500">
-                        <i class="fas fa-exchange-alt mr-2"></i> Zmień poziom
                     </button>
                     
                     <a href="tryb-finalny.html" class="btn-kawaii">
@@ -319,7 +304,7 @@
                 <span class="inline-block mx-1">✨</span>
                 <span class="inline-block mx-1">💫</span>
             </div>
-            <p>&copy; 2025 Nauka Bilansu - Projekt edukacyjny</p>
+            <p>&copy; 2025 Quiz Rachunkowości - Projekt edukacyjny</p>
             <p class="text-pink-200 mt-2 text-sm">Strona stworzona w celach edukacyjnych</p>
         </div>
     </footer>
@@ -336,11 +321,8 @@
             const questionType = document.getElementById('question-type');
             const checkBtn = document.getElementById('check-btn');
             const nextBtn = document.getElementById('next-btn');
-            const startBasicBtn = document.getElementById('start-basic-btn');
-            const startAdvancedBtn = document.getElementById('start-advanced-btn');
+            const startQuizBtn = document.getElementById('start-quiz-btn');
             const restartQuizBtn = document.getElementById('restart-quiz-btn');
-            const switchLevelBtn = document.getElementById('switch-level-btn');
-            const difficultySelect = document.getElementById('difficulty-select');
             const scoreDisplay = document.getElementById('score');
             const totalPointsDisplay = document.getElementById('total-points');
             const currentQuestionDisplay = document.getElementById('current-question');
@@ -355,162 +337,140 @@
             const correctAnswers = document.getElementById('correct-answers');
             const resultMessage = document.getElementById('result-message');
             
-            // Pytania dla quizu podstawowego
-            const basicQuestions = [
+            // Pytania z rachunkowości
+            const questions = [
                 {
-                    type: 'single',
-                    question: 'Co to jest bilans?',
+                    question: 'Kosztem układu kalkulacyjnego jest:',
                     options: [
-                        'Zestawienie przychodów i kosztów przedsiębiorstwa',
-                        'Zestawienie aktywów i pasywów przedsiębiorstwa na określony dzień',
-                        'Zestawienie wpływów i wydatków przedsiębiorstwa',
-                        'Zestawienie zysków i strat przedsiębiorstwa'
+                        'Amortyzacja',
+                        'Koszty działalności podstawowej',
+                        'Usługi obce',
+                        'Podatki i opłaty'
                     ],
-                    correctAnswer: [1],
-                    explanation: 'Bilans to zestawienie aktywów (majątku) i pasywów (źródeł finansowania) przedsiębiorstwa sporządzone na określony dzień. Jest to jeden z podstawowych elementów sprawozdania finansowego.',
+                    correctAnswer: 1,
+                    explanation: 'W układzie kalkulacyjnym koszty grupuje się i rozlicza według rodzajów (typów) działalności. Wyodrębnia się tutaj koszty: działalności podstawowej, działalności pomocniczej, zakupu, sprzedaży, ogólnego zarządu.',
                     points: 1
                 },
                 {
-                    type: 'single',
-                    question: 'Jaka jest podstawowa zasada bilansu?',
+                    question: 'Pobranie kredytu bankowego w rachunku przepływów pieniężnych jest elementem działalności:',
                     options: [
-                        'Aktywa > Pasywa',
-                        'Aktywa < Pasywa',
-                        'Aktywa = Pasywa',
-                        'Aktywa - Pasywa = Wynik finansowy'
+                        'Finansowej',
+                        'Operacyjnej',
+                        'Inwestycyjnej',
+                        'Nadzwyczajnej'
                     ],
-                    correctAnswer: [2],
-                    explanation: 'Podstawowa zasada bilansu to równanie: Aktywa = Pasywa. Oznacza to, że suma aktywów (majątku) przedsiębiorstwa musi być równa sumie pasywów (źródeł finansowania).',
+                    correctAnswer: 0,
+                    explanation: 'Zaciąganie kredytów, pożyczek, emisja akcji to działalność finansowa.',
                     points: 1
                 },
                 {
-                    type: 'true-false',
-                    question: 'Środki trwałe zaliczane są do aktywów obrotowych.',
+                    question: 'Zasada podwójnego zapisu polega na tym, że każda operacja księgowana jest:',
                     options: [
-                        'Prawda',
-                        'Fałsz'
+                        'W tej samej kwocie, po przeciwnych stronach dwóch kont',
+                        'W tej samej kwocie, po tej samej stronie dwóch kont',
+                        'W różnych kwotach, po przeciwnych stronach dwóch kont',
+                        'Tylko na kontach aktywów'
                     ],
-                    correctAnswer: [1],
-                    explanation: 'To stwierdzenie jest fałszywe. Środki trwałe zaliczane są do aktywów trwałych, ponieważ ich przewidywany okres ekonomicznej użyteczności jest dłuższy niż rok.',
+                    correctAnswer: 0,
+                    explanation: 'Zasada podwójnego księgowania – każdą operację gospodarczą wyrażoną wartościowo księguje się przynajmniej na dwóch kontach, po przeciwnej stronie kont i w tej samej kwocie.',
                     points: 1
                 },
                 {
-                    type: 'multiple',
-                    question: 'Które z poniższych pozycji zaliczane są do aktywów obrotowych?',
+                    question: 'Zasada kasowa dotyczy:',
                     options: [
-                        'Budynek produkcyjny',
-                        'Zapasy materiałów',
-                        'Należności z tytułu dostaw i usług',
-                        'Wartość firmy'
+                        'Aktywów i kosztów',
+                        'Wpłat i wypłat',
+                        'Przychodów i kosztów',
+                        'Aktywów i przychodów'
                     ],
-                    correctAnswer: [1, 2],
-                    explanation: 'Do aktywów obrotowych zaliczane są zapasy materiałów oraz należności z tytułu dostaw i usług. Budynek produkcyjny i wartość firmy to aktywa trwałe.',
-                    points: 2
-                },
-                {
-                    type: 'single',
-                    question: 'Co zaliczamy do kapitału własnego?',
-                    options: [
-                        'Należności od odbiorców',
-                        'Zobowiązania wobec dostawców',
-                        'Kapitał zakładowy',
-                        'Kredyt bankowy'
-                    ],
-                    correctAnswer: [2],
-                    explanation: 'Do kapitału własnego zaliczamy m.in. kapitał zakładowy, który jest wnoszony przez właścicieli przy zakładaniu spółki. Należności i zobowiązania to elementy odpowiednio aktywów obrotowych i zobowiązań, a kredyt bankowy to element zobowiązań.',
+                    correctAnswer: 1,
+                    explanation: 'Metoda kasowa odnosi się do głównej metody księgowej, która rozpoznaje przychody i wydatki w momencie otrzymania lub wypłaty gotówki. Jest to przeciwieństwo metody memoriałowej.',
                     points: 1
                 },
                 {
-                    type: 'multiple',
-                    question: 'Które z poniższych pozycji zaliczane są do zobowiązań?',
+                    question: 'Oprogramowanie komputerowe jest elementem składowym:',
                     options: [
-                        'Kredyt długoterminowy',
-                        'Kapitał zapasowy',
-                        'Zobowiązania z tytułu dostaw i usług',
-                        'Zysk netto'
+                        'Środków trwałych',
+                        'Aktywów obrotowych',
+                        'Wartości niematerialnych i prawnych',
+                        'Żadna odpowiedź nie jest poprawna'
                     ],
-                    correctAnswer: [0, 2],
-                    explanation: 'Do zobowiązań zaliczane są kredyt długoterminowy oraz zobowiązania z tytułu dostaw i usług. Kapitał zapasowy i zysk netto to elementy kapitału własnego.',
-                    points: 2
-                },
-                {
-                    type: 'true-false',
-                    question: 'Kapitał zakładowy to element pasywów.',
-                    options: [
-                        'Prawda',
-                        'Fałsz'
-                    ],
-                    correctAnswer: [0],
-                    explanation: 'To stwierdzenie jest prawdziwe. Wartość firmy (goodwill) może być ujemna, co oznacza, że zapłacono za przedsiębiorstwo mniej niż wynosi wartość godziwa jego aktywów netto. Ujemna wartość firmy jest ujmowana jako zysk w rachunku zysków i strat.',
+                    correctAnswer: 2,
+                    explanation: 'Programy komputerowe (np. licencje) to wartości niematerialne i prawne, bo nie mają fizycznej formy jak np. budynek czy maszyna (środek trwały).',
                     points: 1
                 },
                 {
-                    type: 'multiple',
-                    question: 'Które z poniższych elementów są składnikami kapitału własnego?',
+                    question: 'Wynik na działalności operacyjnej nie obejmuje:',
                     options: [
-                        'Kapitał z aktualizacji wyceny',
-                        'Rozliczenia międzyokresowe bierne',
-                        'Kapitał rezerwowy',
-                        'Rezerwa na odroczony podatek dochodowy'
+                        'Kosztów finansowych',
+                        'Przychodów ze sprzedaży',
+                        'Kosztów uzyskania przychodów',
+                        'Pozostałych kosztów operacyjnych'
                     ],
-                    correctAnswer: [0, 2],
-                    explanation: 'Składnikami kapitału własnego są kapitał z aktualizacji wyceny oraz kapitał rezerwowy. Rozliczenia międzyokresowe bierne i rezerwa na odroczony podatek dochodowy są elementami zobowiązań i rezerw na zobowiązania.',
-                    points: 2
-                },
-                {
-                    type: 'single',
-                    question: 'Jak klasyfikuje się rozliczenia międzyokresowe czynne?',
-                    options: [
-                        'Jako element zobowiązań',
-                        'Jako element kapitału własnego',
-                        'Jako element aktywów',
-                        'Jako element kosztów operacyjnych'
-                    ],
-                    correctAnswer: [2],
-                    explanation: 'Rozliczenia międzyokresowe czynne klasyfikuje się jako element aktywów. Są to koszty poniesione w bieżącym okresie, ale dotyczące przyszłych okresów sprawozdawczych.',
+                    correctAnswer: 0,
+                    explanation: 'Na działalność operacyjną jednostki składają się przychody i koszty operacyjne. Nie obejmują one przychodów z działalności finansowej, takich jak odsetki od inwestycji.',
                     points: 1
                 },
                 {
-                    type: 'true-false',
-                    question: 'Należności długoterminowe to takie, których termin wymagalności przekracza 12 miesięcy od dnia bilansowego.',
+                    question: 'Poprawne są następujące typy operacji bilansowych:',
                     options: [
-                        'Prawda',
-                        'Fałsz'
+                        'A+, P-',
+                        'A-, P+',
+                        'A-, A+',
+                        'P-, P+'
                     ],
-                    correctAnswer: [0],
-                    explanation: 'To stwierdzenie jest prawdziwe. Należności długoterminowe to takie, których termin wymagalności przekracza 12 miesięcy od dnia bilansowego. Należności o terminie wymagalności krótszym niż 12 miesięcy klasyfikuje się jako krótkoterminowe.',
+                    correctAnswer: 2,
+                    explanation: 'Wynika to z zasady równowagi bilansowej – ogólna suma aktywów musi być równa ogólnej sumie pasywów. Poprawny jest typ operacji aktywnej (dodamy, potem odejmiemy i się wyrówna, nie zaburza to sumy łącznej aktywów).',
                     points: 1
                 },
                 {
-                    type: 'multiple',
-                    question: 'Które z poniższych pozycji zaliczane są do inwestycji krótkoterminowych?',
+                    question: 'Aktywa zawsze równają się pasywom bowiem:',
                     options: [
-                        'Udziały w spółkach zależnych',
-                        'Środki pieniężne w kasie',
-                        'Krótkoterminowe papiery wartościowe',
-                        'Nieruchomości inwestycyjne'
+                        'Wynika to z zasady podwójnego zapisu',
+                        'Jest to samo, tylko z innego punktu widzenia',
+                        'Wynika to z typów operacji wynikowych',
+                        'Pasywa są kontami aktywnymi'
                     ],
-                    correctAnswer: [1, 2],
-                    explanation: 'Do inwestycji krótkoterminowych zaliczane są środki pieniężne w kasie oraz krótkoterminowe papiery wartościowe. Udziały w spółkach zależnych i nieruchomości inwestycyjne to zwykle inwestycje długoterminowe.',
-                    points: 2
+                    correctAnswer: 0,
+                    explanation: 'Każdy zapis księgowy powoduje równoczesne zmiany po obu stronach bilansu, dlatego suma aktywów = suma pasywów zawsze. Jak zapisujemy coś po jednej stronie konta np. Wn, to musi być też ta sama kwota po stronie Ma.',
+                    points: 1
+                },
+                {
+                    question: 'Na kontach wynikowych przychodów zwiększenie stanu księguje się po stronie:',
+                    options: [
+                        'Dt',
+                        'Wn',
+                        'Obciążenie konta',
+                        'Żadna odpowiedź nie jest poprawna'
+                    ],
+                    correctAnswer: 3,
+                    explanation: 'Wszystkie powyższe powiązania to określenia na tą samą stronę, na kontach przychodów zwiększenie stanu księguje się po stronie przeciwnej – zwanej Ct (od credit), Ma lub Uznanie konta.',
+                    points: 1
+                },
+                {
+                    question: 'Zadaniem bilansu obrotów i sald jest określenie:',
+                    options: [
+                        'Sporządzenie bilansu zamknięcia',
+                        'Poprawności księgowań wynikających z zasady podwójnego zapisu',
+                        'Tylko sum sald kont',
+                        'Sporządzenie bilansu otwarcia'
+                    ],
+                    correctAnswer: 1,
+                    explanation: 'Bilans obrotów i sald to narzędzie kontrolne - sprawdza, czy obroty Wn i Ma są sobie równe. Pomaga upewnić się, że wszystko dobrze zaksięgowaliśmy.',
+                    points: 1
                 }
             ];
             
             // Zmienne globalne
-            let currentQuestions = [];
             let currentQuestionIndex = 0;
             let userScore = 0;
             let totalPoints = 0;
-            let selectedOptions = [];
-            let currentDifficulty = 'basic';
+            let selectedOption = -1;
             
             // Inicjalizacja quizu
-            function initQuiz(difficulty) {
-                // Ustaw aktualne pytania na podstawie wybranego poziomu trudności
-                currentQuestions = difficulty === 'basic' ? [...basicQuestions] : [...advancedQuestions];
-                
+            function initQuiz() {
                 // Losowe mieszanie pytań
-                currentQuestions.sort(() => Math.random() - 0.5);
+                questions.sort(() => Math.random() - 0.5);
                 
                 // Resetowanie zmiennych
                 currentQuestionIndex = 0;
@@ -518,21 +478,17 @@
                 totalPoints = 0;
                 
                 // Obliczanie całkowitej liczby punktów
-                currentQuestions.forEach(question => {
+                questions.forEach(question => {
                     totalPoints += question.points;
                 });
                 
                 // Aktualizacja wyświetlania
                 totalPointsDisplay.textContent = totalPoints;
                 scoreDisplay.textContent = userScore;
-                totalQuestionsDisplay.textContent = currentQuestions.length;
+                totalQuestionsDisplay.textContent = questions.length;
                 
                 // Wyświetlenie pierwszego pytania
                 showQuestion(currentQuestionIndex);
-                
-                // Aktualizacja wyboru trudności
-                difficultySelect.value = difficulty;
-                currentDifficulty = difficulty;
                 
                 // Pokazanie kontenera quizu i ukrycie innych sekcji
                 quizIntro.classList.add('hidden');
@@ -544,19 +500,11 @@
             // Wyświetlanie pytania
             function showQuestion(index) {
                 // Pobranie aktualnego pytania
-                const question = currentQuestions[index];
+                const question = questions[index];
                 
                 // Aktualizacja tekstu pytania
                 questionText.textContent = question.question;
-                
-                // Aktualizacja typu pytania
-                if (question.type === 'single') {
-                    questionType.textContent = 'Wybierz jedną odpowiedź:';
-                } else if (question.type === 'multiple') {
-                    questionType.textContent = 'Wybierz wszystkie poprawne odpowiedzi:';
-                } else if (question.type === 'true-false') {
-                    questionType.textContent = 'Określ czy zdanie jest prawdziwe czy fałszywe:';
-                }
+                questionType.textContent = 'Wybierz jedną odpowiedź:';
                 
                 // Wyczyszczenie kontenera opcji
                 optionsContainer.innerHTML = '';
@@ -567,39 +515,26 @@
                     optionElement.className = 'quiz-option';
                     optionElement.setAttribute('data-index', optionIndex);
                     
-                    if (question.type === 'multiple') {
-                        optionElement.innerHTML = `
-                            <label class="flex items-start cursor-pointer">
-                                <input type="checkbox" class="mt-1 mr-2 h-4 w-4 text-pink-600 rounded focus:ring-pink-500">
-                                <span>${option}</span>
-                            </label>
-                        `;
-                    } else {
-                        optionElement.innerHTML = `
-                            <label class="flex items-start cursor-pointer">
-                                <input type="radio" name="quiz-option" class="mt-1 mr-2 h-4 w-4 text-pink-600 focus:ring-pink-500">
-                                <span>${option}</span>
-                            </label>
-                        `;
-                    }
+                    optionElement.innerHTML = `
+                        <label class="flex items-start cursor-pointer">
+                            <input type="radio" name="quiz-option" class="mt-1 mr-2 h-4 w-4 text-pink-600 focus:ring-pink-500">
+                            <span>${option}</span>
+                        </label>
+                    `;
                     
                     // Dodanie obsługi kliknięcia
                     optionElement.addEventListener('click', function() {
-                        const input = this.querySelector('input');
+                        // Odznaczenie innych opcji
+                        document.querySelectorAll('#options-container .quiz-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                            opt.querySelector('input').checked = false;
+                        });
                         
-                        if (question.type === 'multiple') {
-                            input.checked = !input.checked;
-                            this.classList.toggle('selected', input.checked);
-                        } else {
-                            // Odznaczenie innych opcji
-                            document.querySelectorAll('#options-container .quiz-option').forEach(opt => {
-                                opt.classList.remove('selected');
-                                opt.querySelector('input').checked = false;
-                            });
-                            
-                            input.checked = true;
-                            this.classList.add('selected');
-                        }
+                        // Zaznaczenie wybranej opcji
+                        const input = this.querySelector('input');
+                        input.checked = true;
+                        this.classList.add('selected');
+                        selectedOption = optionIndex;
                     });
                     
                     optionsContainer.appendChild(optionElement);
@@ -607,12 +542,13 @@
                 
                 // Aktualizacja numeru pytania i paska postępu
                 currentQuestionDisplay.textContent = index + 1;
-                const progress = ((index + 1) / currentQuestions.length) * 100;
+                const progress = ((index + 1) / questions.length) * 100;
                 progressFill.style.width = `${progress}%`;
                 progressPercent.textContent = `${Math.round(progress)}%`;
                 
                 // Resetowanie przycisku sprawdzania
                 checkBtn.disabled = false;
+                selectedOption = -1;
                 
                 // Ukrycie kontenera wyjaśnienia
                 explanationContainer.classList.add('hidden');
@@ -620,49 +556,21 @@
             
             // Sprawdzanie odpowiedzi
             function checkAnswer() {
-                const question = currentQuestions[currentQuestionIndex];
-                const options = document.querySelectorAll('#options-container .quiz-option');
-                
-                let isCorrect = true;
-                selectedOptions = [];
-                
-                // Zbieranie wybranych opcji
-                options.forEach(option => {
-                    const input = option.querySelector('input');
-                    const optionIndex = parseInt(option.getAttribute('data-index'));
-                    
-                    if (input.checked) {
-                        selectedOptions.push(optionIndex);
-                    }
-                });
-                
-                // Sprawdzenie poprawności dla różnych typów pytań
-                if (question.type === 'multiple') {
-                    // Dla pytań wielokrotnego wyboru sprawdzamy czy wybrano wszystkie poprawne opcje i nie wybrano żadnych niepoprawnych
-                    if (selectedOptions.length !== question.correctAnswer.length) {
-                        isCorrect = false;
-                    } else {
-                        for (const selected of selectedOptions) {
-                            if (!question.correctAnswer.includes(selected)) {
-                                isCorrect = false;
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    // Dla pytań jednokrotnego wyboru i prawda/fałsz
-                    if (selectedOptions.length !== 1 || selectedOptions[0] !== question.correctAnswer[0]) {
-                        isCorrect = false;
-                    }
+                if (selectedOption === -1) {
+                    alert('Proszę wybrać odpowiedź!');
+                    return;
                 }
                 
+                const question = questions[currentQuestionIndex];
+                const options = document.querySelectorAll('#options-container .quiz-option');
+                
+                let isCorrect = selectedOption === question.correctAnswer;
+                
                 // Podświetlenie poprawnych i niepoprawnych odpowiedzi
-                options.forEach(option => {
-                    const optionIndex = parseInt(option.getAttribute('data-index'));
-                    
-                    if (question.correctAnswer.includes(optionIndex)) {
+                options.forEach((option, index) => {
+                    if (index === question.correctAnswer) {
                         option.classList.add('correct');
-                    } else if (selectedOptions.includes(optionIndex)) {
+                    } else if (index === selectedOption && !isCorrect) {
                         option.classList.add('incorrect');
                     }
                 });
@@ -694,7 +602,7 @@
             function nextQuestion() {
                 currentQuestionIndex++;
                 
-                if (currentQuestionIndex < currentQuestions.length) {
+                if (currentQuestionIndex < questions.length) {
                     showQuestion(currentQuestionIndex);
                 } else {
                     showResults();
@@ -716,25 +624,21 @@
                 // Wiadomość wynikowa
                 let message = '';
                 if (percent >= 90) {
-                    message = 'Świetny wynik! Doskonale znasz strukturę bilansu i jego elementy.';
+                    message = 'Świetny wynik! Doskonale znasz podstawy rachunkowości.';
                 } else if (percent >= 70) {
-                    message = 'Dobry wynik! Masz solidną wiedzę o bilansie, ale możesz jeszcze pogłębić niektóre zagadnienia.';
+                    message = 'Dobry wynik! Masz solidną wiedzę z rachunkowości, ale możesz jeszcze pogłębić niektóre zagadnienia.';
                 } else if (percent >= 50) {
-                    message = 'Przyzwoity wynik. Warto powtórzyć niektóre aspekty bilansu, aby lepiej zrozumieć jego strukturę.';
+                    message = 'Przyzwoity wynik. Warto powtórzyć niektóre aspekty rachunkowości, aby lepiej zrozumieć jej podstawy.';
                 } else {
-                    message = 'Warto poświęcić więcej czasu na naukę bilansu. Spróbuj ponownie po przejrzeniu materiału wprowadzającego.';
+                    message = 'Warto poświęcić więcej czasu na naukę rachunkowości. Spróbuj ponownie po przejrzeniu materiału wprowadzającego.';
                 }
                 
                 resultMessage.textContent = message;
             }
             
             // Obsługa przycisków
-            startBasicBtn.addEventListener('click', function() {
-                initQuiz('basic');
-            });
-            
-            startAdvancedBtn.addEventListener('click', function() {
-                initQuiz('advanced');
+            startQuizBtn.addEventListener('click', function() {
+                initQuiz();
             });
             
             checkBtn.addEventListener('click', function() {
@@ -746,16 +650,7 @@
             });
             
             restartQuizBtn.addEventListener('click', function() {
-                initQuiz(currentDifficulty);
-            });
-            
-            switchLevelBtn.addEventListener('click', function() {
-                const newDifficulty = currentDifficulty === 'basic' ? 'advanced' : 'basic';
-                initQuiz(newDifficulty);
-            });
-            
-            difficultySelect.addEventListener('change', function() {
-                initQuiz(this.value);
+                initQuiz();
             });
         });
     </script>
